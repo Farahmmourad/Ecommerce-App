@@ -3,7 +3,6 @@ import 'package:marketky/constant/app_color.dart';
 import 'package:marketky/core/model/Product.dart';
 import 'package:marketky/views/screens/product_detail.dart';
 import 'package:marketky/views/widgets/rating_tag.dart';
-import 'package:pecahan_rupiah/pecahan_rupiah.dart';
 
 class ItemCard extends StatelessWidget {
   final Product product;
@@ -61,7 +60,7 @@ class ItemCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: 2, bottom: 8),
                     child: Text(
-                      '${Pecahan.rupiah(value: product.price, withRp: true)}',
+                      '${product.price}',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,

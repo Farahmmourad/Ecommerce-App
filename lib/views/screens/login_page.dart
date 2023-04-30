@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,8 +15,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final fb = FirebaseDatabase.instance;
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final ref = fb.ref().child('users');
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -90,6 +98,7 @@ class _LoginPageState extends State<LoginPage> {
           // Section 2 - Form
           // Email
           TextField(
+            controller: email,
             autofocus: false,
             decoration: InputDecoration(
               hintText: 'youremail@email.com',
@@ -113,6 +122,7 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(height: 16),
           // Password
           TextField(
+            controller: password,
             autofocus: false,
             obscureText: true,
             decoration: InputDecoration(
@@ -155,8 +165,25 @@ class _LoginPageState extends State<LoginPage> {
           ),
           // Sign In button
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageSwitcher()));
+            onPressed: () async {
+              try {
+                final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email.text,
+                    password: password.text
+                );
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageSwitcher()));
+              } on FirebaseAuthException catch (e) {
+                log(e as num);
+                if (e.code == 'user-not-found') {
+                  log('No user found for that email.' as num);
+                } else if (e.code == 'wrong-password') {
+                  log('Wrong password provided for that user.' as num);
+                }
+              } catch (e) {
+                log(e);
+              }
+
+
             },
             child: Text(
               'Sign in',

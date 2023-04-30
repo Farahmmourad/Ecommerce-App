@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marketky/constant/app_color.dart';
 import 'package:marketky/core/model/Cart.dart';
-import 'package:pecahan_rupiah/pecahan_rupiah.dart';
 
 class CartTile extends StatelessWidget {
   final Cart data;
@@ -50,7 +49,7 @@ class CartTile extends StatelessWidget {
                       // Product Price
                       Expanded(
                         child: Text(
-                          '${Pecahan.rupiah(value: data.price, withRp: true)}',
+                          '${data.price}',
                           style: TextStyle(fontWeight: FontWeight.w700, fontFamily: 'poppins', color: AppColor.primary),
                         ),
                       ),

@@ -10,7 +10,6 @@ import 'package:marketky/views/widgets/rating_tag.dart';
 import 'package:marketky/views/widgets/review_tile.dart';
 import 'package:marketky/views/widgets/selectable_circle_color.dart';
 import 'package:marketky/views/widgets/selectable_circle_size.dart';
-import 'package:pecahan_rupiah/pecahan_rupiah.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -174,7 +173,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 Container(
                   margin: EdgeInsets.only(bottom: 14),
                   child: Text(
-                    '${Pecahan.rupiah(value: product.price, withRp: true)}',
+                    '${product.price}',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'poppins', color: AppColor.primary),
                   ),
                 ),

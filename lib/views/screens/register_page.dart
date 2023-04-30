@@ -1,9 +1,13 @@
+import 'dart:math';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marketky/constant/app_color.dart';
 import 'package:marketky/views/screens/login_page.dart';
 import 'package:marketky/views/screens/otp_verification_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -11,8 +15,17 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<RegisterPage> {
+  final fb = FirebaseDatabase.instance;
+  TextEditingController fullname = TextEditingController();
+  TextEditingController username = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    var rng = Random();
+    var k = rng.nextInt(10000);
+    final ref = fb.ref().child('users/$k');
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -22,6 +35,7 @@ class _LoginPageState extends State<RegisterPage> {
         title: Text('Sign up', style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w600)),
         leading: IconButton(
           onPressed: () {
+
             Navigator.of(context).pop();
           },
           icon: SvgPicture.asset('assets/icons/Arrow-left.svg'),
@@ -90,6 +104,7 @@ class _LoginPageState extends State<RegisterPage> {
           // Section 2  - Form
           // Full Name
           TextField(
+            controller: fullname,
             autofocus: false,
             decoration: InputDecoration(
               hintText: 'Full Name',
@@ -113,6 +128,7 @@ class _LoginPageState extends State<RegisterPage> {
           SizedBox(height: 16),
           // Username
           TextField(
+            controller: username,
             autofocus: false,
             decoration: InputDecoration(
               hintText: 'Username',
@@ -136,6 +152,7 @@ class _LoginPageState extends State<RegisterPage> {
           SizedBox(height: 16),
           // Email
           TextField(
+            controller: email,
             autofocus: false,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
@@ -160,6 +177,7 @@ class _LoginPageState extends State<RegisterPage> {
           SizedBox(height: 16),
           // Password
           TextField(
+            controller: password,
             autofocus: false,
             obscureText: true,
             decoration: InputDecoration(
@@ -218,7 +236,31 @@ class _LoginPageState extends State<RegisterPage> {
           SizedBox(height: 24),
           // Sign Up Button
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              try {
+                final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email.text,
+                  password: password.text,
+                );
+
+                ref.set({
+                  "fullName": fullname.text,
+                  "username": username.text,
+                  "email": email.text,
+                  "password": password.text,
+                }).asStream();
+
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'weak-password') {
+                  log('The password provided is too weak.' as num);
+                } else if (e.code == 'email-already-in-use') {
+                  log('The account already exists for that email.' as num);
+                }
+              } catch (e) {
+                print(e);
+              }
+
+
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => OTPVerificationPage()));
             },
             child: Text(

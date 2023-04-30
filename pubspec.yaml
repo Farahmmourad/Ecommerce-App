@@ -25,12 +25,12 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^0.22.0
-  pecahan_rupiah: ^0.0.1
   smooth_page_indicator: ^1.0.0+2
   smooth_star_rating: ^1.1.1
   pin_code_fields: ^7.3.0
   firebase_core: ^2.10.0
   firebase_database: ^10.1.1
+  firebase_auth: ^4.4.2
 
 dev_dependencies:
   flutter_test:
