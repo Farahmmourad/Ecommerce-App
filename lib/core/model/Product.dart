@@ -1,18 +1,20 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:marketky/core/model/ColorWay.dart';
 import 'package:marketky/core/model/ProductSize.dart';
 import 'package:marketky/core/model/Review.dart';
 
 class Product {
-  List<String> image;
+  List<dynamic> image;
   String name;
   int price;
   double rating;
   String description;
-  List<ColorWay> colors;
-  List<ProductSize> sizes;
-  List<Review> reviews;
+  List<dynamic> colors;
+  List<dynamic> sizes;
+  List<dynamic> reviews;
   String storeName;
+  String category;
 
   Product({
     @required this.image,
@@ -24,6 +26,7 @@ class Product {
     @required this.sizes,
     @required this.reviews,
     @required this.storeName,
+    @required this.category,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -38,6 +41,7 @@ class Product {
         sizes: (json['sizes'] as List).map((data) => ProductSize.fromJson(data)).toList(),
         reviews: (json['reviews'] as List).map((data) => Review.fromJson(data)).toList(),
         storeName: json['store_name'],
+        category: json['category'],
       );
     } catch (e) {
       print(e);

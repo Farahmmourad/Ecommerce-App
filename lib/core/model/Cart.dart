@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class Cart {
-  List<String> image;
+  List<dynamic> image;
   String name;
   int price;
   int count;

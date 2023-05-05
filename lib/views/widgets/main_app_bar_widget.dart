@@ -45,6 +45,7 @@ class _MainAppBarState extends State<MainAppBar> {
           ),
           CustomIconButtonWidget(
             onTap: () {
+              //add also conidtion if empty or not go to cart page
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage()));
             },
             value: widget.cartValue,

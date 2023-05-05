@@ -173,7 +173,6 @@ class _LoginPageState extends State<LoginPage> {
                 );
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageSwitcher()));
               } on FirebaseAuthException catch (e) {
-                log(e as num);
                 if (e.code == 'user-not-found') {
                   log('No user found for that email.' as num);
                 } else if (e.code == 'wrong-password') {

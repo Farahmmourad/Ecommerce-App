@@ -67,7 +67,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       context: context,
                       backgroundColor: Colors.transparent,
                       builder: (context) {
-                        return AddToCartModal();
+                        return AddToCartModal(product: product);
                       },
                     );
                   },

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marketky/constant/app_color.dart';
@@ -23,7 +25,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Category> categoryData = CategoryService.categoryData;
-  List<Product> productData = ProductService.productData;
+  // List<Product> productData = ProductService.productData;
+
+  final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
 
   Timer flashsaleCountdownTimer;
   Duration flashsaleCountdownDuration = Duration(
@@ -32,11 +36,35 @@ class _HomePageState extends State<HomePage> {
     seconds: 60 - DateTime.now().second,
   );
 
+  // List to hold data
+  // List<dynamic> dataList = [];
+  dynamic dataList = [];
+
   @override
   void initState() {
     super.initState();
+
+    // Listen for changes in database reference
+    databaseReference.onValue.listen((event) {
+      setState(() {
+        //change this to List<Map<String, Object>>
+        dataList = event.snapshot.value;
+        // log(dataList1 as String);
+        List<Map<String, Object>> mappedList = [];
+        for (var item in dataList) {
+          Map<String, Object> mappedItem = Map<String, Object>.from(item);
+          mappedList.add(mappedItem);
+        }
+        // log(mappedList as String);
+        List<Product> products = mappedList.map((data) => Product.fromJson(data)).toList();
+        // log(products as String);
+        dataList = products;
+        // log(dataList1 as String);
+      });
+    });
     startTimer();
   }
+
 
   void startTimer() {
     Timer.periodic(Duration(seconds: 1), (_) {
@@ -121,6 +149,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           CustomIconButtonWidget(
                             onTap: () {
+                              //add condition if card empty then navigate to EmptyCartPage else navigate to CartPage
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => EmptyCartPage()));
                             },
@@ -340,14 +369,14 @@ class _HomePageState extends State<HomePage> {
                           physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           children: List.generate(
-                            productData.length,
+                            dataList.length,
                             (index) => Padding(
                               padding: const EdgeInsets.only(left: 16.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ItemCard(
-                                    product: productData[index],
+                                    product: dataList[index],
                                     titleColor: AppColor.primarySoft,
                                     priceColor: AppColor.accent,
                                   ),
@@ -421,9 +450,9 @@ class _HomePageState extends State<HomePage> {
               spacing: 16,
               runSpacing: 16,
               children: List.generate(
-                productData.length,
+                dataList.length,
                 (index) => ItemCard(
-                  product: productData[index],
+                  product: dataList[index],
                 ),
               ),
             ),

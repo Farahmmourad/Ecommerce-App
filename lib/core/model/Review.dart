@@ -8,7 +8,7 @@ class Review {
 
   Review({@required this.photoUrl, @required this.name, @required this.review, @required this.rating});
 
-  factory Review.fromJson(Map<String, dynamic> json) {
+  factory Review.fromJson(Map<dynamic, dynamic> json) {
     return Review(photoUrl: json['photo_url'], name: json['name'], review: json['review'], rating: json['rating']);
   }
 }

@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 
 class ColorWay {
   String name;
-  Color color;
+  String color;
 
   ColorWay({@required this.name, @required this.color});
 
-  factory ColorWay.fromJson(Map<String, dynamic> json) {
+  factory ColorWay.fromJson(Map<dynamic, dynamic> json) {
     return ColorWay(name: json['name'], color: json['color']);
   }
 }

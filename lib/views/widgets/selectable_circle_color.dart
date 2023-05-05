@@ -42,7 +42,7 @@ class _SelectableCircleState extends State<SelectableCircleColor> {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: widget.colorWay[index].color,
+                    color: Color(int.parse(widget.colorWay[index].color.substring(1, 7), radix: 16) + 0xFF000000),
                     borderRadius: BorderRadius.circular(100),
                     border: Border.all(
                       width: 4,

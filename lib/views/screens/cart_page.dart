@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,12 +10,29 @@ import 'package:marketky/views/screens/order_success_page.dart';
 import 'package:marketky/views/widgets/cart_tile.dart';
 
 class CartPage extends StatefulWidget {
+  final dynamic cartDataList;
+  CartPage({@required this.cartDataList});
+
   @override
   _CartPageState createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
-  List<Cart> cartData = CartService.cartData;
+  // List<Cart> cartData = CartService.cartData;
+//add data from db with where condition on the email
+
+  String email = FirebaseAuth.instance.currentUser.email;
+  // final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('orders');
+  List<dynamic> cartDataList2 = [];
+  // dynamic totalPrice = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listen for changes in database reference
+    cartDataList2 = widget.cartDataList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +131,12 @@ class _CartPageState extends State<CartPage> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return CartTile(
-                data: cartData[index],
-              );
+                return CartTile(
+                  data: cartDataList2[index],
+                );
             },
             separatorBuilder: (context, index) => SizedBox(height: 16),
-            itemCount: 3,
+            itemCount: cartDataList2.length,
           ),
           // Section 2 - Shipping Information
           Container(

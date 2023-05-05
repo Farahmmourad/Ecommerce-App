@@ -1,15 +1,36 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:marketky/constant/app_color.dart';
 import 'package:marketky/views/screens/cart_page.dart';
 
+import '../../../core/model/Cart.dart';
+import '../../../core/model/Product.dart';
+import '../../../core/services/CartService.dart';
+
 class AddToCartModal extends StatefulWidget {
+  final Product product;
+  AddToCartModal({@required this.product});
+
   @override
   _AddToCartModalState createState() => _AddToCartModalState();
 }
 
 class _AddToCartModalState extends State<AddToCartModal> {
+  final fb = FirebaseDatabase.instance;
+
+  final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('orders');
+
   @override
   Widget build(BuildContext context) {
+    var rng = Random();
+    var k = rng.nextInt(10000);
+    final ref = fb.ref().child('orders/$k');
+
+    Product product = widget.product;
+
     return Container(
       height: 190,
       decoration: BoxDecoration(
@@ -39,7 +60,7 @@ class _AddToCartModalState extends State<AddToCartModal> {
               Container(
                 margin: EdgeInsets.only(left: 6),
                 child: Text(
-                  'Jumlah Produk',
+                  product.name,
                   style: TextStyle(
                     fontFamily: 'poppins',
                     color: Color(0xFF0A0E2F).withOpacity(0.5),
@@ -98,7 +119,7 @@ class _AddToCartModalState extends State<AddToCartModal> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('TOTAL', style: TextStyle(fontSize: 10, fontFamily: 'poppins')),
-                        Text('Rp 1,429,000', style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.w700)),
+                        Text(product.price.toString(), style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.w700)),
                       ],
                     ),
                   ),
@@ -107,7 +128,46 @@ class _AddToCartModalState extends State<AddToCartModal> {
                   flex: 6,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage()));
+                      //add products to cart
+                      String email = FirebaseAuth.instance.currentUser.email;
+
+                      addToCart(email,product);
+
+                      dynamic cartDataList = [];
+                      dynamic totalPrice = 0;
+
+                      databaseReference.onValue.listen((event) {
+                        setState(() {
+                          cartDataList = event.snapshot.value;
+                          dynamic listofproducts = [];
+
+                          if (cartDataList != null) {
+                            cartDataList.forEach((key, value) {
+                              if (value['email'] == email && value['active'] == true) {
+                                listofproducts = value['cart'];
+                              }
+                            });
+                          }
+
+                          List<Map<String, Object>> mappedList = [];
+                          for (var item in listofproducts) {
+                            Map<String, Object> mappedItem = Map<String, Object>.from(item);
+                            mappedList.add(mappedItem);
+                          }
+                          List<Cart> cardsItem = mappedList.map((data) => Cart.fromJson(data)).toList();
+
+                          for (var item in cardsItem) {
+                            totalPrice = totalPrice + item.count * item.price;
+                          }
+
+                          cartDataList = cardsItem;
+                        });
+                      });
+                      Future.delayed(Duration(seconds: 2), () => {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage(cartDataList : cartDataList)))
+                      });
+
+
                     },
                     child: Text(
                       'Add to Cart',
