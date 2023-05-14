@@ -5,7 +5,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:marketky/Admin/main_admin.dart';
 import 'package:marketky/constant/app_color.dart';
+import 'package:marketky/views/screens/home_page.dart';
 import 'package:marketky/views/screens/page_switcher.dart';
 import 'package:marketky/views/screens/register_page.dart';
 
@@ -153,9 +155,11 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainAdmin()));
+              },
               child: Text(
-                'Forgot Password ?',
+                'Admin ?',
                 style: TextStyle(fontSize: 12, color: AppColor.secondary.withOpacity(0.5), fontWeight: FontWeight.w700),
               ),
               style: TextButton.styleFrom(
@@ -166,21 +170,21 @@ class _LoginPageState extends State<LoginPage> {
           // Sign In button
           ElevatedButton(
             onPressed: () async {
-              try {
-                final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: email.text,
-                    password: password.text
-                );
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageSwitcher()));
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'user-not-found') {
-                  log('No user found for that email.' as num);
-                } else if (e.code == 'wrong-password') {
-                  log('Wrong password provided for that user.' as num);
-                }
-              } catch (e) {
-                log(e);
-              }
+              // try {
+              //   final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+              //       email: email.text,
+              //       password: password.text
+              //   );
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+              // } on FirebaseAuthException catch (e) {
+              //   if (e.code == 'user-not-found') {
+              //     log('No user found for that email.' as num);
+              //   } else if (e.code == 'wrong-password') {
+              //     log('Wrong password provided for that user.' as num);
+              //   }
+              // } catch (e) {
+              //   log(e);
+              // }
 
 
             },

@@ -9,4 +9,11 @@ class ColorWay {
   factory ColorWay.fromJson(Map<dynamic, dynamic> json) {
     return ColorWay(name: json['name'], color: json['color']);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'color': color,
+    };
+  }
 }

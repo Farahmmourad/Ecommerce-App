@@ -10,9 +10,9 @@ class Product {
   int price;
   double rating;
   String description;
-  List<dynamic> colors;
-  List<dynamic> sizes;
-  List<dynamic> reviews;
+  List<ColorWay> colors;
+  List<ProductSize> sizes;
+  List<Review> reviews;
   String storeName;
   String category;
 
@@ -30,7 +30,7 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    try {
+    // try {
       return Product(
         image: json['image'],
         name: json['name'],
@@ -39,13 +39,32 @@ class Product {
         description: json['description'],
         colors: (json['colors'] as List).map((data) => ColorWay.fromJson(data)).toList(),
         sizes: (json['sizes'] as List).map((data) => ProductSize.fromJson(data)).toList(),
-        reviews: (json['reviews'] as List).map((data) => Review.fromJson(data)).toList(),
+        reviews: (json['reviews'] as List)?.map((data) => Review.fromJson(data))?.toList() ?? [],
         storeName: json['store_name'],
         category: json['category'],
       );
-    } catch (e) {
-      print(e);
-      return e;
-    }
+    // }
+      // catch (e) {
+    //   print(e);
+    //   return e;
+    // }
+  }
+
+  Map<String, dynamic> toJson() {
+    List<Map<String, dynamic>> colorList = colors.map((color) => color.toJson()).toList();
+    List<Map<String, dynamic>> sizeList = sizes.map((size) => size.toJson()).toList();
+    List<Map<String, dynamic>> reviewList = reviews.map((review) => review.toJson()).toList();
+    return {
+      'name': name,
+      'image': image,
+      'rating': rating,
+      'description': description,
+      'price': price,
+      'colors': colorList,
+      'sizes': sizeList,
+      'reviews': reviewList,
+      'storeName': storeName,
+      'category': category,
+    };
   }
 }

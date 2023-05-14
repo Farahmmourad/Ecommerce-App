@@ -57,7 +57,6 @@ class ReviewTile extends StatelessWidget {
                             allowHalfRating: false,
                             size: 16,
                             color: Colors.orange[400],
-                            rating: review.rating,
                             borderColor: AppColor.primarySoft,
                           ),
                         )
