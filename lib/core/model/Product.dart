@@ -40,9 +40,27 @@ class Product {
         storeName: json['store_name'],
         category: json['category'],
       );
-    } catch (e) {
+    }
+      catch (e) {
       print(e);
       return e;
     }
+  }
+
+  Map<String, dynamic> toJson() {
+    List<dynamic> colorList = colors.map((color) => color.toJson()).toList();
+    List<dynamic> sizeList = sizes.map((size) => size.toJson()).toList();
+    List<dynamic> reviewList = reviews.map((review) => review.toJson()).toList();
+    return {
+      'name': name,
+      'image': image,
+      'description': description,
+      'price': price,
+      'colors': colorList,
+      'sizes': sizeList,
+      'reviews': reviewList,
+      'storeName': storeName,
+      'category': category,
+    };
   }
 }

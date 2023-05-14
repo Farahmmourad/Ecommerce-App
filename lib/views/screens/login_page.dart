@@ -5,7 +5,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:marketky/Admin/main_admin.dart';
 import 'package:marketky/constant/app_color.dart';
+import 'package:marketky/views/screens/home_page.dart';
 import 'package:marketky/views/screens/page_switcher.dart';
 import 'package:marketky/views/screens/register_page.dart';
 
@@ -153,9 +155,11 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainAdmin()));
+              },
               child: Text(
-                'Forgot Password ?',
+                'Admin ?',
                 style: TextStyle(fontSize: 12, color: AppColor.secondary.withOpacity(0.5), fontWeight: FontWeight.w700),
               ),
               style: TextButton.styleFrom(

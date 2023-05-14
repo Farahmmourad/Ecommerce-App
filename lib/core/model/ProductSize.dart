@@ -12,4 +12,10 @@ class ProductSize {
       size: json['size'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'size': size,
+    };
+  }
 }

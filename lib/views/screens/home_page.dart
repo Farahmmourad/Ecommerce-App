@@ -79,6 +79,8 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
+
+
     databaseReferenceOrders.onValue.listen((event) {
       totalItemsInCart = 0;
 
@@ -117,6 +119,8 @@ class _HomePageState extends State<HomePage> {
   }
 
 
+
+
   // void startTimer() {
   //   Timer.periodic(Duration(seconds: 1), (_) {
   //     setCountdown();
@@ -145,6 +149,15 @@ class _HomePageState extends State<HomePage> {
   //
   //   super.dispose();
   // }
+
+  String query = '';
+  dynamic get filteredItems {
+    if (query.isEmpty || query == "all") {
+      return dataList;
+    }
+
+    return dataList.where((Product item) => item.category.toLowerCase()==query.toLowerCase()).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -299,7 +312,11 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       return CategoryCard(
                         data: categoryData[index],
-                        onTap: () {},
+                        onTap: () {
+                          setState(() {
+                            query = categoryData[index].name;
+                          });
+                        },
                       );
                     },
                   ),
@@ -509,9 +526,9 @@ class _HomePageState extends State<HomePage> {
               spacing: 16,
               runSpacing: 16,
               children: List.generate(
-                dataList.length,
+                filteredItems.length,
                 (index) => ItemCard(
-                  product: dataList[index],
+                  product: filteredItems[index],
                 ),
               ),
             ),

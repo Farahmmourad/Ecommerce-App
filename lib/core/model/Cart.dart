@@ -17,7 +17,7 @@ class Cart {
     @required this.sizeName,
   });
 
-  factory Cart.fromJson(Map<String, dynamic> json) {
+  factory Cart.fromJson(Map<dynamic, dynamic> json) {
     return Cart(
       image: json['image'],
       name: json['name'],
@@ -26,5 +26,16 @@ class Cart {
       colorName: json['colorName'],
       sizeName: json['sizeName'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'image': image,
+      'price': price,
+      'count': count,
+      'colorName': colorName,
+      'sizeName': sizeName,
+    };
   }
 }

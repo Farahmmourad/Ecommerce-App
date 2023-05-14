@@ -8,7 +8,7 @@ var categoryRawData = [
   {
     'featured': true,
     'icon_url': 'assets/icons/Discount.svg',
-    'name': 'best offer',
+    'name': 'all',
   },
   {
     'featured': false,
