@@ -269,18 +269,6 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 16,
                             fontWeight: FontWeight.w600),
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'View More',
-                          style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
-                              fontWeight: FontWeight.w400),
-                        ),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
                     ],
                   ),
                 ),

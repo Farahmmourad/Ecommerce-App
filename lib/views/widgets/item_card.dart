@@ -47,7 +47,7 @@ class ItemCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 image: DecorationImage(
-                    image: AssetImage(product.image[0]), fit: BoxFit.cover),
+                    image: NetworkImage(product.image[0]), fit: BoxFit.cover),
               ),
               //change this later to average of all ratings of reviews
               child: (product.reviews.length != 0) ? RatingTag(value: getAverageRating()) : null,

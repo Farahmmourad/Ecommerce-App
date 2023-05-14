@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             margin: EdgeInsets.only(top: 20, bottom: 12),
             child: Text(
-              'Welcome Back Mate ! 😁',
+              'Welcome to Boutique M.! 😁',
               style: TextStyle(
                 color: AppColor.secondary,
                 fontWeight: FontWeight.w700,
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             margin: EdgeInsets.only(bottom: 32),
             child: Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing \nelit, sed do eiusmod ',
+              'Login to start shopping!',
               style: TextStyle(color: AppColor.secondary.withOpacity(0.7), fontSize: 12, height: 150 / 100),
             ),
           ),

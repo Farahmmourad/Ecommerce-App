@@ -83,22 +83,15 @@ class _LoginPageState extends State<RegisterPage> {
         children: [
           // Section 1 - Header
           Container(
-            margin: EdgeInsets.only(top: 20, bottom: 12),
+            margin: EdgeInsets.only(top: 20, bottom: 22),
             child: Text(
-              'Welcome to MarketKy  👋',
+              'Welcome to Boutique M.  👋',
               style: TextStyle(
                 color: AppColor.secondary,
                 fontWeight: FontWeight.w700,
                 fontFamily: 'poppins',
                 fontSize: 20,
               ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(bottom: 32),
-            child: Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing \nelit, sed do eiusmod ',
-              style: TextStyle(color: AppColor.secondary.withOpacity(0.7), fontSize: 12, height: 150 / 100),
             ),
           ),
           // Section 2  - Form
@@ -269,42 +262,6 @@ class _LoginPageState extends State<RegisterPage> {
             ),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 36, vertical: 18), backgroundColor: AppColor.primary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              elevation: 0,
-              shadowColor: Colors.transparent,
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.symmetric(vertical: 16),
-            child: Text(
-              'or continue with',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-          ),
-          // SIgn in With Google
-          ElevatedButton(
-            onPressed: () {},
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  'assets/icons/Google.svg',
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 16),
-                  child: Text(
-                    'Continue with Google',
-                    style: TextStyle(
-                      color: AppColor.secondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            style: ElevatedButton.styleFrom(
-              foregroundColor: AppColor.primary, padding: EdgeInsets.symmetric(horizontal: 36, vertical: 12), backgroundColor: AppColor.primarySoft,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               elevation: 0,
               shadowColor: Colors.transparent,

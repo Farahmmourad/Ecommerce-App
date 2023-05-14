@@ -12,27 +12,22 @@ var categoryRawData = [
   },
   {
     'featured': false,
-    'icon_url': 'assets/icons/High-heels.svg',
-    'name': 'woman shoes',
+    'icon_url': 'assets/icons/shirts-garment-fashion-woman-man-wear-svgrepo-com.svg',
+    'name': 'woman shirts',
   },
   {
     'featured': false,
     'icon_url': 'assets/icons/Woman-dress.svg',
-    'name': 'woman dress',
-  },
-  {
-    'featured': false,
-    'icon_url': 'assets/icons/Man-Clothes.svg',
-    'name': 'man clothes',
+    'name': 'woman dresses',
   },
   {
     'featured': false,
     'icon_url': 'assets/icons/Man-Pants.svg',
-    'name': 'man pants',
+    'name': 'woman pants',
   },
   {
     'featured': false,
-    'icon_url': 'assets/icons/Man-Shoes.svg',
-    'name': 'man shoes',
+    'icon_url': 'assets/icons/skirt-svgrepo-com.svg',
+    'name': 'woman skirts',
   },
 ];

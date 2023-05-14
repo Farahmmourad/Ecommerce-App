@@ -145,9 +145,12 @@ class _ProductDetailState extends State<ProductDetail> {
                     controller: productImageSlider,
                     children: List.generate(
                       product.image.length,
-                      (index) => Image.asset(
+                      (index) => Image.network(
                         product.image[index],
+                        width: 100,
+                        height: 100,
                         fit: BoxFit.cover,
+                        alignment: Alignment.topLeft,
                       ),
                     ),
                   ),

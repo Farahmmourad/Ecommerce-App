@@ -25,7 +25,7 @@ class WelcomePage extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(bottom: 12),
                   child: Text(
-                    'MarketKy',
+                    'Boutique M.',
                     style: TextStyle(
                       color: AppColor.secondary,
                       fontWeight: FontWeight.w700,
@@ -35,7 +35,7 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Market in your pocket. Find \nyour best outfit here.',
+                  'Find \nyour best outfit here.',
                   style: TextStyle(color: AppColor.secondary.withOpacity(0.7), fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
