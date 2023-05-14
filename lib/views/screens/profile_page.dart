@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Section 1 - Profile Picture - Username - Name
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/background.jpg'),
@@ -33,32 +33,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             child: Column(
               children: [
-                // Profile Picture
-                Container(
-                  width: 96,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.grey,
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/pp.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                // Fullname
-                Container(
-                  margin: EdgeInsets.only(bottom: 4, top: 14),
-                  child: Text(
-                    'Nadsya Utari',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
-                  ),
-                ),
-                // Username
-                Text(
-                  '@UtariNad',
-                  style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 14),
-                ),
               ],
             ),
           ),
@@ -87,51 +61,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: 'Wishlist',
                   subtitle: 'Lorem ipsum Dolor sit Amet',
                 ),
-                MenuTileWidget(
-                  onTap: () {},
-                  icon: SvgPicture.asset(
-                    'assets/icons/Show.svg',
-                    color: AppColor.secondary.withOpacity(0.5),
-                  ),
-                  title: 'Last Seen',
-                  subtitle: 'Lorem ipsum Dolor sit Amet',
-                ),
-                MenuTileWidget(
-                  onTap: () {},
-                  icon: SvgPicture.asset(
-                    'assets/icons/Heart.svg',
-                    color: AppColor.secondary.withOpacity(0.5),
-                  ),
-                  title: 'Wishlist',
-                  subtitle: 'Lorem ipsum Dolor sit Amet',
-                ),
-                MenuTileWidget(
-                  onTap: () {},
-                  icon: SvgPicture.asset(
-                    'assets/icons/Bag.svg',
-                    color: AppColor.secondary.withOpacity(0.5),
-                  ),
-                  title: 'Orders',
-                  subtitle: 'Lorem ipsum Dolor sit Amet',
-                ),
-                MenuTileWidget(
-                  onTap: () {},
-                  icon: SvgPicture.asset(
-                    'assets/icons/Wallet.svg',
-                    color: AppColor.secondary.withOpacity(0.5),
-                  ),
-                  title: 'Wallet',
-                  subtitle: 'Lorem ipsum Dolor sit Amet',
-                ),
-                MenuTileWidget(
-                  onTap: () {},
-                  icon: SvgPicture.asset(
-                    'assets/icons/Location.svg',
-                    color: AppColor.secondary.withOpacity(0.5),
-                  ),
-                  title: 'Addresses',
-                  subtitle: 'Lorem ipsum Dolor sit Amet',
-                ),
               ],
             ),
           ),
@@ -139,28 +68,11 @@ class _ProfilePageState extends State<ProfilePage> {
           // Section 3 - Settings
           Container(
             width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(top: 24),
+            margin: EdgeInsets.only(top: 5),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: EdgeInsets.only(left: 16),
-                  child: Text(
-                    'SETTINGS',
-                    style: TextStyle(color: AppColor.secondary.withOpacity(0.5), letterSpacing: 6 / 100, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                MenuTileWidget(
-                  onTap: () {},
-                  margin: EdgeInsets.only(top: 10),
-                  icon: SvgPicture.asset(
-                    'assets/icons/Filter.svg',
-                    color: AppColor.secondary.withOpacity(0.5),
-                  ),
-                  title: 'Languages',
-                  subtitle: 'Lorem ipsum Dolor sit Amet',
-                ),
                 MenuTileWidget(
                   onTap: () {},
                   icon: SvgPicture.asset(

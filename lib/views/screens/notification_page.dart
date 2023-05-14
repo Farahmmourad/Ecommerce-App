@@ -104,26 +104,6 @@ class _NotificationPageState extends State<NotificationPage> {
         shrinkWrap: true,
         physics: BouncingScrollPhysics(),
         children: [
-          // Section 1 - Menu
-          MenuTileWidget(
-            onTap: () {},
-            icon: SvgPicture.asset(
-              'assets/icons/Discount.svg',
-              color: AppColor.secondary.withOpacity(0.5),
-            ),
-            title: 'Product Promo',
-            subtitle: 'Lorem ipsum Dolor sit Amet',
-          ),
-          MenuTileWidget(
-            onTap: () {},
-            icon: SvgPicture.asset(
-              'assets/icons/Info Square.svg',
-              color: AppColor.secondary.withOpacity(0.5),
-            ),
-            title: 'Marketky Info',
-            subtitle: 'Lorem ipsum Dolor sit Amet',
-          ),
-          // Section 2 - Status ( LIST )
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.symmetric(vertical: 16),

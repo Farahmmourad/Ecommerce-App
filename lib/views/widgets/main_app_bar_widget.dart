@@ -115,17 +115,6 @@ class _MainAppBarState extends State<MainAppBar> {
               color: Colors.white,
             ),
           ),
-          CustomIconButtonWidget(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => MessagePage()));
-            },
-            value: widget.chatValue,
-            margin: EdgeInsets.only(left: 16),
-            icon: SvgPicture.asset(
-              'assets/icons/Chat.svg',
-              color: Colors.white,
-            ),
-          ),
         ],
       ), systemOverlayStyle: SystemUiOverlayStyle.light,
     );

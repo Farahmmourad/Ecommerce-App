@@ -231,18 +231,6 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.white,
                             ),
                           ),
-                          CustomIconButtonWidget(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MessagePage()));
-                            },
-                            value: 2,
-                            margin: EdgeInsets.only(left: 16),
-                            icon: SvgPicture.asset(
-                              'assets/icons/Chat.svg',
-                              color: Colors.white,
-                            ),
-                          ),
                         ],
                       ),
                     ],

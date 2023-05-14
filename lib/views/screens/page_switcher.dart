@@ -25,7 +25,6 @@ class _PageSwitcherState extends State<PageSwitcher> {
     return Scaffold(
       body: [
         HomePage(),
-        // FeedsPage(),
         NotificationPage(),
         ProfilePage(),
       ][_selectedIndex],
@@ -39,13 +38,9 @@ class _PageSwitcherState extends State<PageSwitcher> {
             (_selectedIndex == 0)
                 ? BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Home-active.svg'), label: '')
                 : BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Home.svg'), label: ''),
-            // (_selectedIndex == 1)
-            //     ? BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Category-active.svg'), label: '')
-            //     : BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Category.svg'), label: ''),
-            // //change the icon here
             (_selectedIndex == 1)
-                ? BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Notification-active.svg'), label: '')
-                : BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Notification.svg'), label: ''),
+                ? BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/bag-svgrepo-com .svg'), label: '')
+                : BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/bag-svgrepo-com2.svg'), label: ''),
             (_selectedIndex == 2)
                 ? BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Profile-active.svg'), label: '')
                 : BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Profile.svg'), label: ''),
