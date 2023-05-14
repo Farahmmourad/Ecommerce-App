@@ -10,8 +10,8 @@ import 'package:marketky/views/screens/order_success_page.dart';
 import 'package:marketky/views/widgets/cart_tile.dart';
 
 class CartPage extends StatefulWidget {
-  final dynamic cartDataList;
-  CartPage({@required this.cartDataList});
+  // final dynamic cartDataList;
+  // CartPage({@required this.cartDataList});
 
   @override
   _CartPageState createState() => _CartPageState();
@@ -23,15 +23,65 @@ class _CartPageState extends State<CartPage> {
 
   String email = FirebaseAuth.instance.currentUser.email;
   // final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('orders');
-  List<dynamic> cartDataList2 = [];
+  // List<dynamic> cartDataList2 = [];
   // dynamic totalPrice = 0;
+
+  final DatabaseReference databaseReferenceOrders = FirebaseDatabase.instance.ref().child('orders');
+  // String email = FirebaseAuth.instance.currentUser.email;
+  int totalItemsInCart = 0;
+  bool isEmpty = true;
+  dynamic cartDataList = [];
+  dynamic totalPrice = 0;
+  final _nameController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    // set initial values for the text fields
+    // _nameController.text = 'Type your name ...';
+    // _addressController.text = 'Type your location ...';
+    // _phoneNumberController.text = 'Type your phone number ...';
 
-    // Listen for changes in database reference
-    cartDataList2 = widget.cartDataList;
+    databaseReferenceOrders.onValue.listen((event) {
+      totalItemsInCart = 0;
+      totalPrice = 0;
+
+      setState(() {
+        cartDataList = event.snapshot.value;
+        dynamic listofproducts = [];
+
+        if (cartDataList != null) {
+          cartDataList.forEach((key, value) {
+            if (value['email'] == email && value['active'] == true) {
+              listofproducts = value['cart'];
+              if(listofproducts != null) {
+                isEmpty = false;
+              }
+            }
+          });
+        }
+
+        List<Map<String, Object>> mappedList = [];
+        for (var item in listofproducts) {
+          Map<String, Object> mappedItem = Map<String, Object>.from(item);
+          // if(mappedList.remove(item))
+          mappedList.add(mappedItem);
+        }
+        List<Cart> cardsItem = mappedList.map((data) => Cart.fromJson(data)).toList();
+
+        cardsItem.removeWhere((item) => item.count == 0);
+
+        for (var item in cardsItem) {
+          totalPrice = totalPrice + item.count * item.price;
+          totalItemsInCart = totalItemsInCart + item.count;
+        }
+
+        cartDataList = cardsItem;
+      });
+    });
+
   }
 
   @override
@@ -49,7 +99,7 @@ class _CartPageState extends State<CartPage> {
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w600)),
-            Text('3 items',
+            Text('$totalItemsInCart Items',
                 style: TextStyle(
                     fontSize: 10, color: Colors.black.withOpacity(0.7))),
           ],
@@ -78,6 +128,7 @@ class _CartPageState extends State<CartPage> {
             border: Border(top: BorderSide(color: AppColor.border, width: 1))),
         child: ElevatedButton(
           onPressed: () {
+            checkoutCart(email, _nameController.text,_addressController.text, _phoneNumberController.text, DateTime.now().toString());
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => OrderSuccessPage()));
           },
@@ -103,7 +154,7 @@ class _CartPageState extends State<CartPage> {
               Flexible(
                 flex: 6,
                 child: Text(
-                  'Rp 10,429,000',
+                  '\$${totalPrice.toString()}',
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
@@ -117,7 +168,7 @@ class _CartPageState extends State<CartPage> {
             padding: EdgeInsets.symmetric(horizontal: 36, vertical: 18),
             backgroundColor: AppColor.primary,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 0,
           ),
         ),
@@ -131,12 +182,12 @@ class _CartPageState extends State<CartPage> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-                return CartTile(
-                  data: cartDataList2[index],
-                );
+              return CartTile(
+                data: cartDataList[index],
+              );
             },
             separatorBuilder: (context, index) => SizedBox(height: 16),
-            itemCount: cartDataList2.length,
+            itemCount: cartDataList.length,
           ),
           // Section 2 - Shipping Information
           Container(
@@ -164,21 +215,21 @@ class _CartPageState extends State<CartPage> {
                             fontWeight: FontWeight.w600,
                             color: AppColor.secondary),
                       ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: SvgPicture.asset(
-                          'assets/icons/Pencil.svg',
-                          width: 16,
-                          color: AppColor.secondary,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: AppColor.primary,
-                          shape: CircleBorder(),
-                          backgroundColor: AppColor.border,
-                          elevation: 0,
-                          padding: EdgeInsets.all(0),
-                        ),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {},
+                      //   child: SvgPicture.asset(
+                      //     'assets/icons/Pencil.svg',
+                      //     width: 16,
+                      //     color: AppColor.secondary,
+                      //   ),
+                      //   style: ElevatedButton.styleFrom(
+                      //     foregroundColor: AppColor.primary,
+                      //     shape: CircleBorder(),
+                      //     backgroundColor: AppColor.border,
+                      //     elevation: 0,
+                      //     padding: EdgeInsets.all(0),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -193,8 +244,13 @@ class _CartPageState extends State<CartPage> {
                             width: 18),
                       ),
                       Expanded(
-                        child: Text(
-                          'Arnold Utomo',
+                        child: TextFormField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            hintText: 'Type your name ...',
+                            hintStyle: TextStyle(color: AppColor.secondary.withOpacity(0.7)),
+                            border: InputBorder.none,
+                          ),
                           style: TextStyle(
                             color: AppColor.secondary.withOpacity(0.7),
                           ),
@@ -210,16 +266,22 @@ class _CartPageState extends State<CartPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.only(right: 12),
+                        margin: EdgeInsets.only(right: 12, top:13),
                         child: SvgPicture.asset('assets/icons/Home.svg',
                             width: 18),
                       ),
                       Expanded(
-                        child: Text(
-                          '1281 90 Trutomo Street, New York, United States ',
+                        child: TextFormField(
+                          controller: _addressController,
+                          decoration: InputDecoration(
+                            hintText: 'Type your address ...',
+                            hintStyle: TextStyle(color: AppColor.secondary.withOpacity(0.7)),
+                            border: InputBorder.none,
+                          ),
                           style: TextStyle(
                             color: AppColor.secondary.withOpacity(0.7),
                           ),
+                          maxLines: null,
                         ),
                       ),
                     ],
@@ -231,13 +293,18 @@ class _CartPageState extends State<CartPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.only(right: 12),
-                        child: SvgPicture.asset('assets/icons/Profile.svg',
+                        margin: EdgeInsets.only(right: 12, top:13),
+                        child: SvgPicture.asset('assets/icons/Call.svg',
                             width: 18),
                       ),
                       Expanded(
-                        child: Text(
-                          '0888 - 8888 - 8888',
+                        child: TextFormField(
+                          controller: _phoneNumberController,
+                          decoration: InputDecoration(
+                            hintText: 'Type your phone number ...',
+                            hintStyle: TextStyle(color: AppColor.secondary.withOpacity(0.7)),
+                            border: InputBorder.none,
+                          ),
                           style: TextStyle(
                             color: AppColor.secondary.withOpacity(0.7),
                           ),
@@ -279,28 +346,28 @@ class _CartPageState extends State<CartPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Select Shipping method',
-                              style: TextStyle(
-                                  color: AppColor.secondary.withOpacity(0.7),
-                                  fontSize: 10)),
-                          Text('Official Shipping',
+                          Text('Pay cash on delivery',
                               style: TextStyle(
                                   color: AppColor.secondary,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'poppins')),
+                          Text('Free delivery',
+                              style: TextStyle(
+                                  color: AppColor.secondary.withOpacity(0.7),
+                                  fontSize: 10)),
                         ],
                       ),
-                      Text('free delivery',
-                          style: TextStyle(
-                              color: AppColor.primary,
-                              fontWeight: FontWeight.w600)),
+                      // Text('free delivery',
+                      //     style: TextStyle(
+                      //         color: AppColor.primary,
+                      //         fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   padding:
-                      EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 20),
+                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -329,7 +396,7 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               flex: 4,
                               child: Text(
-                                'Rp 0',
+                                '',
                                 textAlign: TextAlign.end,
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600,
@@ -354,7 +421,7 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               flex: 4,
                               child: Text(
-                                '4 Items',
+                                '$totalItemsInCart Items',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: AppColor.secondary.withOpacity(0.7)),
@@ -363,7 +430,7 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               flex: 4,
                               child: Text(
-                                'Rp 1,429,000',
+                                '\$${totalPrice.toString()}',
                                 textAlign: TextAlign.end,
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600,

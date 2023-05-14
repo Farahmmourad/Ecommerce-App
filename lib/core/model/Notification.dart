@@ -1,24 +1,36 @@
 import 'package:flutter/cupertino.dart';
 
+import 'Cart.dart';
+
 class UserNotification {
-  String imageUrl;
-  String title;
-  String description;
-  DateTime dateTime;
+  String address;
+  String name;
+  String phoneNumber;
+  String status;
+  String orderedOn;
+  double totalPrice;
+  List<Cart> cart;
+
 
   UserNotification({
-    @required this.imageUrl,
-    @required this.title,
-    @required this.description,
-    @required this.dateTime,
+    @required this.address,
+    @required this.name,
+    @required this.phoneNumber,
+    @required this.status,
+    @required this.orderedOn,
+    @required this.cart,
+    @required this.totalPrice,
   });
 
   factory UserNotification.fromJson(Map<String, dynamic> json) {
     return UserNotification(
-      imageUrl: json['image_url'],
-      title: json['title'],
-      description: json['description'],
-      dateTime: DateTime.parse(json['date_time']),
+      address: json['address'],
+      name: json['name'],
+      phoneNumber: json['phoneNumber'],
+      status: json['status'],
+      orderedOn: json['orderedOn'],
+      totalPrice: json['totalPrice'],
+      cart: json['cart'],
     );
   }
 }

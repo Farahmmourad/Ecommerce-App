@@ -8,7 +8,6 @@ class Product {
   List<dynamic> image;
   String name;
   int price;
-  double rating;
   String description;
   List<dynamic> colors;
   List<dynamic> sizes;
@@ -20,7 +19,6 @@ class Product {
     @required this.image,
     @required this.name,
     @required this.price,
-    @required this.rating,
     @required this.description,
     @required this.colors,
     @required this.sizes,
@@ -35,11 +33,10 @@ class Product {
         image: json['image'],
         name: json['name'],
         price: json['price'],
-        rating: json['rating'],
         description: json['description'],
         colors: (json['colors'] as List).map((data) => ColorWay.fromJson(data)).toList(),
         sizes: (json['sizes'] as List).map((data) => ProductSize.fromJson(data)).toList(),
-        reviews: (json['reviews'] as List).map((data) => Review.fromJson(data)).toList(),
+        reviews: json['reviews'] != null ? (json['reviews'] as List).map((data) => Review.fromJson(data)).toList() : [],
         storeName: json['store_name'],
         category: json['category'],
       );

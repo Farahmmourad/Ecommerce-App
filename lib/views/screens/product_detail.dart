@@ -12,8 +12,11 @@ import 'package:marketky/views/widgets/selectable_circle_color.dart';
 import 'package:marketky/views/widgets/selectable_circle_size.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../core/services/ProductService.dart';
+
 class ProductDetail extends StatefulWidget {
   final Product product;
+
   ProductDetail({@required this.product});
 
   @override
@@ -22,9 +25,44 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   PageController productImageSlider = PageController();
+
+  int _selectedIndex = 0;
+
+// Define a TextEditingController for the review text field
+  final TextEditingController _reviewController = TextEditingController();
+
+// Define a variable to store the number of stars the user chose
+  double _rating = 0;
+
+  _change(index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  int _selectedIndexSize = 0;
+
+  _changeSize(index) {
+    setState(() {
+      _selectedIndexSize = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Product product = widget.product;
+
+    getAverageRating() {
+        double average = 0.0;
+        for (var i = 0; i < product.reviews.length; i++) {
+          average += product.reviews[i].rating;
+        }
+        double calcualtedAverage = average / product.reviews.length;
+        double truncatedNumber = double.parse(
+            calcualtedAverage.toStringAsFixed(1));
+        return truncatedNumber;
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -67,7 +105,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       context: context,
                       backgroundColor: Colors.transparent,
                       builder: (context) {
-                        return AddToCartModal(product: product);
+                        return AddToCartModal(product: product, color : product.colors[_selectedIndex], size : product.sizes[_selectedIndexSize]);
                       },
                     );
                   },
@@ -91,13 +129,13 @@ class _ProductDetailState extends State<ProductDetail> {
             children: [
               // product image
               GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ImageViewer(imageUrl: product.image),
-                    ),
-                  );
-                },
+                // onTap: () {
+                //   Navigator.of(context).push(
+                //     MaterialPageRoute(
+                //       builder: (context) => ImageViewer(imageUrl: product.image),
+                //     ),
+                //   );
+                // },
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 310,
@@ -117,7 +155,7 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
               // appbar
               CustomAppBar(
-                title: '${product.storeName}',
+                title: '${product.name}',
                 leftIcon: SvgPicture.asset('assets/icons/Arrow-left.svg'),
                 rightIcon: SvgPicture.asset(
                   'assets/icons/Bookmark.svg',
@@ -163,17 +201,19 @@ class _ProductDetailState extends State<ProductDetail> {
                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, fontFamily: 'poppins', color: AppColor.secondary),
                         ),
                       ),
-                      RatingTag(
-                        margin: EdgeInsets.only(left: 10),
-                        value: product.rating,
-                      ),
+                      if (product.reviews.length != 0)
+                        RatingTag(
+                          margin: EdgeInsets.only(left: 10),
+                          //change this later to average of all reviews
+                          value: getAverageRating(),
+                        ),
                     ],
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom: 14),
                   child: Text(
-                    '${product.price}',
+                    '\$${product.price}',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'poppins', color: AppColor.primary),
                   ),
                 ),
@@ -205,6 +245,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 SelectableCircleColor(
                   colorWay: product.colors,
                   margin: EdgeInsets.only(top: 12),
+                  change: _change,
                 ),
               ],
             ),
@@ -231,8 +272,86 @@ class _ProductDetailState extends State<ProductDetail> {
                 SelectableCircleSize(
                   productSize: product.sizes,
                   margin: EdgeInsets.only(top: 12),
+                  changeSize : _changeSize,
                 ),
               ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            // margin: EdgeInsets.only(top: 8),
+            child: Divider(
+              thickness: 1,
+              color: AppColor.secondary.withOpacity(0.2),
+            ),
+          ),
+          //Add review section
+          Container(
+            margin: EdgeInsets.only(top: 6),
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            // margin: EdgeInsets.only(bottom: 20),
+            child: Row(
+              children: [
+                for (int i = 1; i <= 5; i++)
+                  IconButton(
+                    icon: Icon(
+                      _rating >= i ? Icons.star : Icons.star_border,
+                      color: AppColor.primary,
+                    ),
+                    onPressed: () {
+                      // Update the rating variable when a star is pressed
+                      setState(() {
+                        _rating = i.toDouble();
+                      });
+                    },
+                  ),
+              ],
+            ),
+          ),
+          Container(
+            // margin: EdgeInsets.only(top: 16),
+            margin: EdgeInsets.only(top: 10),
+            // width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: TextField(
+              controller: _reviewController,
+              decoration: InputDecoration(
+                hintText: 'Write your review...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: AppColor.primary,
+                    width: 2,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              ),
+              maxLines: 2,
+            ),
+          ),
+          // Add the star rating section
+
+          // Add the "Add Review" button
+          Container(
+            // color: AppColor.secondary,
+            margin: EdgeInsets.only(top: 16, bottom: 10),
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            // margin: EdgeInsets.only(top: 24),
+            // width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                String review = _reviewController.text;
+                double stars = _rating;
+
+                addReview(product, review, stars.toDouble());
+              },
+              child: Text('Add Review'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: AppColor.primarySoft, elevation: 0, backgroundColor: AppColor.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
             ),
           ),
 
@@ -264,30 +383,30 @@ class _ProductDetailState extends State<ProductDetail> {
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) => ReviewTile(review: product.reviews[index]),
                       separatorBuilder: (context, index) => SizedBox(height: 16),
-                      itemCount: 2,
+                      itemCount: product.reviews.length,
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 52, top: 12, bottom: 6),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ReviewsPage(
-                                reviews: product.reviews,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'See More Reviews',
-                          style: TextStyle(color: AppColor.secondary, fontWeight: FontWeight.w600),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: AppColor.primary, elevation: 0, backgroundColor: AppColor.primarySoft,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                      ),
-                    )
+                    // Container(
+                    //   margin: EdgeInsets.only(left: 52, top: 12, bottom: 6),
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       Navigator.of(context).push(
+                    //         MaterialPageRoute(
+                    //           builder: (context) => ReviewsPage(
+                    //             reviews: product.reviews,
+                    //           ),
+                    //         ),
+                    //       );
+                    //     },
+                    //     child: Text(
+                    //       'See More Reviews',
+                    //       style: TextStyle(color: AppColor.secondary, fontWeight: FontWeight.w600),
+                    //     ),
+                    //     style: ElevatedButton.styleFrom(
+                    //       foregroundColor: AppColor.primary, elevation: 0, backgroundColor: AppColor.primarySoft,
+                    //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
               ],

@@ -16,19 +16,19 @@ class ReviewTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // User Photo
-          Container(
-            width: 36,
-            height: 36,
-            margin: EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(100),
-              image: DecorationImage(
-                image: AssetImage('${review.photoUrl}'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+          // Container(
+          //   width: 36,
+          //   height: 36,
+          //   margin: EdgeInsets.only(right: 16),
+          //   decoration: BoxDecoration(
+          //     color: Colors.grey,
+          //     borderRadius: BorderRadius.circular(100),
+          //     image: DecorationImage(
+          //       image: AssetImage('${review.photoUrl}'),
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          // ),
           // Username - Rating - Comments
           Expanded(
             child: Container(
@@ -57,7 +57,7 @@ class ReviewTile extends StatelessWidget {
                             allowHalfRating: false,
                             size: 16,
                             color: Colors.orange[400],
-                            rating: review.rating,
+                            rating: review.rating.toDouble(),
                             borderColor: AppColor.primarySoft,
                           ),
                         )

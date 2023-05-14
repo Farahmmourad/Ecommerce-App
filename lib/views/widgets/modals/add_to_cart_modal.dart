@@ -12,7 +12,10 @@ import '../../../core/services/CartService.dart';
 
 class AddToCartModal extends StatefulWidget {
   final Product product;
-  AddToCartModal({@required this.product});
+  dynamic color;
+  dynamic size;
+
+  AddToCartModal({@required this.product, this.color, this.size});
 
   @override
   _AddToCartModalState createState() => _AddToCartModalState();
@@ -30,6 +33,11 @@ class _AddToCartModalState extends State<AddToCartModal> {
     final ref = fb.ref().child('orders/$k');
 
     Product product = widget.product;
+    dynamic color = widget.color;
+    String colorName = color.name;
+
+    dynamic size = widget.size;
+    String sizeName = size.name;
 
     return Container(
       height: 190,
@@ -68,33 +76,33 @@ class _AddToCartModalState extends State<AddToCartModal> {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Icon(Icons.remove, size: 20, color: Colors.black),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: AppColor.primary, shape: CircleBorder(), backgroundColor: AppColor.border,
-                      padding: EdgeInsets.all(0),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      '2',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, fontFamily: 'poppins'),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Icon(Icons.add, size: 20, color: Colors.black),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: AppColor.primary, shape: CircleBorder(), backgroundColor: AppColor.border,
-                      padding: EdgeInsets.all(0),
-                    ),
-                  ),
-                ],
-              )
+              // Row(
+              //   children: [
+              //     ElevatedButton(
+              //       onPressed: () {},
+              //       child: Icon(Icons.remove, size: 20, color: Colors.black),
+              //       style: ElevatedButton.styleFrom(
+              //         foregroundColor: AppColor.primary, shape: CircleBorder(), backgroundColor: AppColor.border,
+              //         padding: EdgeInsets.all(0),
+              //       ),
+              //     ),
+              //     Container(
+              //       margin: EdgeInsets.symmetric(horizontal: 12),
+              //       child: Text(
+              //         '2',
+              //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, fontFamily: 'poppins'),
+              //       ),
+              //     ),
+              //     ElevatedButton(
+              //       onPressed: () {},
+              //       child: Icon(Icons.add, size: 20, color: Colors.black),
+              //       style: ElevatedButton.styleFrom(
+              //         foregroundColor: AppColor.primary, shape: CircleBorder(), backgroundColor: AppColor.border,
+              //         padding: EdgeInsets.all(0),
+              //       ),
+              //     ),
+              //   ],
+              // )
             ],
           ),
           // Section 2 - Total and add to cart button
@@ -119,7 +127,7 @@ class _AddToCartModalState extends State<AddToCartModal> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('TOTAL', style: TextStyle(fontSize: 10, fontFamily: 'poppins')),
-                        Text(product.price.toString(), style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.w700)),
+                        Text('\$${product.price.toString()}', style: TextStyle(fontSize: 16, fontFamily: 'poppins', fontWeight: FontWeight.w700)),
                       ],
                     ),
                   ),
@@ -131,42 +139,41 @@ class _AddToCartModalState extends State<AddToCartModal> {
                       //add products to cart
                       String email = FirebaseAuth.instance.currentUser.email;
 
-                      addToCart(email,product);
+                      addToCart(email,product, colorName, sizeName);
 
-                      dynamic cartDataList = [];
-                      dynamic totalPrice = 0;
-
-                      databaseReference.onValue.listen((event) {
-                        setState(() {
-                          cartDataList = event.snapshot.value;
-                          dynamic listofproducts = [];
-
-                          if (cartDataList != null) {
-                            cartDataList.forEach((key, value) {
-                              if (value['email'] == email && value['active'] == true) {
-                                listofproducts = value['cart'];
-                              }
-                            });
-                          }
-
-                          List<Map<String, Object>> mappedList = [];
-                          for (var item in listofproducts) {
-                            Map<String, Object> mappedItem = Map<String, Object>.from(item);
-                            mappedList.add(mappedItem);
-                          }
-                          List<Cart> cardsItem = mappedList.map((data) => Cart.fromJson(data)).toList();
-
-                          for (var item in cardsItem) {
-                            totalPrice = totalPrice + item.count * item.price;
-                          }
-
-                          cartDataList = cardsItem;
-                        });
-                      });
+                      // dynamic cartDataList = [];
+                      // dynamic totalPrice = 0;
+                      //
+                      // databaseReference.onValue.listen((event) {
+                      //   setState(() {
+                      //     cartDataList = event.snapshot.value;
+                      //     dynamic listofproducts = [];
+                      //
+                      //     if (cartDataList != null) {
+                      //       cartDataList.forEach((key, value) {
+                      //         if (value['email'] == email && value['active'] == true) {
+                      //           listofproducts = value['cart'];
+                      //         }
+                      //       });
+                      //     }
+                      //
+                      //     List<Map<String, Object>> mappedList = [];
+                      //     for (var item in listofproducts) {
+                      //       Map<String, Object> mappedItem = Map<String, Object>.from(item);
+                      //       mappedList.add(mappedItem);
+                      //     }
+                      //     List<Cart> cardsItem = mappedList.map((data) => Cart.fromJson(data)).toList();
+                      //
+                      //     for (var item in cardsItem) {
+                      //       totalPrice = totalPrice + item.count * item.price;
+                      //     }
+                      //
+                      //     cartDataList = cardsItem;
+                      //   });
+                      // });
                       Future.delayed(Duration(seconds: 2), () => {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage(cartDataList : cartDataList)))
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage()))
                       });
-
 
                     },
                     child: Text(

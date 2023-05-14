@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:ffi';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,6 +20,9 @@ import 'package:marketky/views/widgets/dummy_search_widget_1.dart';
 import 'package:marketky/views/widgets/flashsale_countdown_tile.dart';
 import 'package:marketky/views/widgets/item_card.dart';
 
+import '../../core/model/Cart.dart';
+import 'cart_page.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -28,13 +33,19 @@ class _HomePageState extends State<HomePage> {
   // List<Product> productData = ProductService.productData;
 
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
+  final DatabaseReference databaseReferenceOrders = FirebaseDatabase.instance.ref().child('orders');
+  String email = FirebaseAuth.instance.currentUser.email;
+  int totalItemsInCart = 0;
+  bool isEmpty = true;
+  dynamic cartDataList = [];
+  dynamic totalPrice = 0;
 
-  Timer flashsaleCountdownTimer;
-  Duration flashsaleCountdownDuration = Duration(
-    hours: 24 - DateTime.now().hour,
-    minutes: 60 - DateTime.now().minute,
-    seconds: 60 - DateTime.now().second,
-  );
+  // Timer flashsaleCountdownTimer;
+  // Duration flashsaleCountdownDuration = Duration(
+  //   hours: 24 - DateTime.now().hour,
+  //   minutes: 60 - DateTime.now().minute,
+  //   seconds: 60 - DateTime.now().second,
+  // );
 
   // List to hold data
   // List<dynamic> dataList = [];
@@ -48,67 +59,107 @@ class _HomePageState extends State<HomePage> {
     databaseReference.onValue.listen((event) {
       setState(() {
         //change this to List<Map<String, Object>>
-        dataList = event.snapshot.value;
+        Map<dynamic, dynamic> dataList1 = event.snapshot.value;
+        List<Map<String, Object>> mappedList2 = [];
+        dataList1.forEach((key, value) {
+          Map<String, Object> mappedItem = Map<String, Object>.from(value);
+          mappedList2.add(mappedItem);
+        });
         // log(dataList1 as String);
-        List<Map<String, Object>> mappedList = [];
-        for (var item in dataList) {
-          Map<String, Object> mappedItem = Map<String, Object>.from(item);
-          mappedList.add(mappedItem);
-        }
+        // for (var item in dataList) {
+        // List<Map<String, Object>> mappedList = [];
+        //   Map<String, Object> mappedItem = Map<String, Object>.from(item);
+        //   mappedList.add(mappedItem);
+        // }
         // log(mappedList as String);
-        List<Product> products = mappedList.map((data) => Product.fromJson(data)).toList();
+        List<Product> products = mappedList2.map((data) => Product.fromJson(data)).toList();
         // log(products as String);
         dataList = products;
         // log(dataList1 as String);
       });
     });
-    startTimer();
-  }
 
+    databaseReferenceOrders.onValue.listen((event) {
+      totalItemsInCart = 0;
 
-  void startTimer() {
-    Timer.periodic(Duration(seconds: 1), (_) {
-      setCountdown();
-    });
-  }
-
-  void setCountdown() {
-    if (this.mounted) {
       setState(() {
-        final seconds = flashsaleCountdownDuration.inSeconds - 1;
+        cartDataList = event.snapshot.value;
+        dynamic listofproducts = [];
 
-        if (seconds < 1) {
-          flashsaleCountdownTimer.cancel();
-        } else {
-          flashsaleCountdownDuration = Duration(seconds: seconds);
+        if (cartDataList != null) {
+          cartDataList.forEach((key, value) {
+            if (value['email'] == email && value['active'] == true) {
+              listofproducts = value['cart'];
+              if(listofproducts != null) {
+                isEmpty = false;
+              }
+            }
+          });
         }
+
+        List<Map<String, Object>> mappedList = [];
+        for (var item in listofproducts) {
+          Map<String, Object> mappedItem = Map<String, Object>.from(item);
+          mappedList.add(mappedItem);
+        }
+        List<Cart> cardsItem = mappedList.map((data) => Cart.fromJson(data)).toList();
+
+        for (var item in cardsItem) {
+          totalPrice = totalPrice + item.count * item.price;
+          totalItemsInCart = totalItemsInCart + item.count;
+        }
+
+        cartDataList = cardsItem;
       });
-    }
+    });
+
+    // startTimer();
   }
 
-  @override
-  void dispose() {
-    if (flashsaleCountdownTimer != null) {
-      flashsaleCountdownTimer.cancel();
-    }
 
-    super.dispose();
-  }
+  // void startTimer() {
+  //   Timer.periodic(Duration(seconds: 1), (_) {
+  //     setCountdown();
+  //   });
+  // }
+
+  // void setCountdown() {
+  //   if (this.mounted) {
+  //     setState(() {
+  //       final seconds = flashsaleCountdownDuration.inSeconds - 1;
+  //
+  //       if (seconds < 1) {
+  //         flashsaleCountdownTimer.cancel();
+  //       } else {
+  //         flashsaleCountdownDuration = Duration(seconds: seconds);
+  //       }
+  //     });
+  //   }
+  // }
+
+  // @override
+  // void dispose() {
+  //   if (flashsaleCountdownTimer != null) {
+  //     flashsaleCountdownTimer.cancel();
+  //   }
+  //
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    String seconds = flashsaleCountdownDuration.inSeconds
-        .remainder(60)
-        .toString()
-        .padLeft(2, '0');
-    String minutes = flashsaleCountdownDuration.inMinutes
-        .remainder(60)
-        .toString()
-        .padLeft(2, '0');
-    String hours = flashsaleCountdownDuration.inHours
-        .remainder(24)
-        .toString()
-        .padLeft(2, '0');
+    // String seconds = flashsaleCountdownDuration.inSeconds
+    //     .remainder(60)
+    //     .toString()
+    //     .padLeft(2, '0');
+    // String minutes = flashsaleCountdownDuration.inMinutes
+    //     .remainder(60)
+    //     .toString()
+    //     .padLeft(2, '0');
+    // String hours = flashsaleCountdownDuration.inHours
+    //     .remainder(24)
+    //     .toString()
+    //     .padLeft(2, '0');
 
     return Scaffold(
       body: ListView(
@@ -136,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Find the best \noutfit for you.',
+                        'Boutique M.',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
@@ -150,10 +201,18 @@ class _HomePageState extends State<HomePage> {
                           CustomIconButtonWidget(
                             onTap: () {
                               //add condition if card empty then navigate to EmptyCartPage else navigate to CartPage
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => EmptyCartPage()));
+
+                              Future.delayed(Duration(seconds: 2), () => {
+                                if(!isEmpty){
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage()))
+                                }else{
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => EmptyCartPage()))
+                                }
+                              });
+
                             },
-                            value: 0,
+                            value: totalItemsInCart,
                             icon: SvgPicture.asset(
                               'assets/icons/Bag.svg',
                               color: Colors.white,
@@ -270,166 +329,166 @@ class _HomePageState extends State<HomePage> {
           // ),
 
           // Section 4 - Flash Sale
-          Container(
-            margin: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColor.primary,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Flash Sale',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: FlashsaleCountdownTile(
-                              digit: hours[0],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: FlashsaleCountdownTile(
-                              digit: hours[1],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: Text(
-                              ':',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: FlashsaleCountdownTile(
-                              digit: minutes[0],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: FlashsaleCountdownTile(
-                              digit: minutes[1],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: Text(
-                              ':',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: FlashsaleCountdownTile(
-                              digit: seconds[0],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: FlashsaleCountdownTile(
-                              digit: seconds[1],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 310,
-                        child: ListView(
-                          shrinkWrap: true,
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          children: List.generate(
-                            dataList.length,
-                            (index) => Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ItemCard(
-                                    product: dataList[index],
-                                    titleColor: AppColor.primarySoft,
-                                    priceColor: AppColor.accent,
-                                  ),
-                                  Container(
-                                    width: 180,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: LinearProgressIndicator(
-                                                minHeight: 10,
-                                                value: 0.4,
-                                                color: AppColor.accent,
-                                                backgroundColor:
-                                                    AppColor.border,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.local_fire_department,
-                                          color: AppColor.accent,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Row(
-                                  //   children: [
-                                  //     Expanded(
-                                  //       child: Container(
-                                  //         color: Colors.amber,
-                                  //         height: 10,
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   margin: EdgeInsets.all(16),
+          //   decoration: BoxDecoration(
+          //     color: AppColor.primary,
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          //   child: Column(
+          //     children: [
+          //       Padding(
+          //         padding: const EdgeInsets.all(16),
+          //         child: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Text(
+          //               'Flash Sale',
+          //               style: TextStyle(
+          //                 color: Colors.white,
+          //                 fontSize: 18,
+          //                 fontWeight: FontWeight.w600,
+          //                 fontFamily: 'Poppins',
+          //               ),
+          //             ),
+          //             Row(
+          //               children: [
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: FlashsaleCountdownTile(
+          //                     digit: hours[0],
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: FlashsaleCountdownTile(
+          //                     digit: hours[1],
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: Text(
+          //                     ':',
+          //                     style: TextStyle(
+          //                       color: Colors.white,
+          //                       fontSize: 16,
+          //                       fontWeight: FontWeight.w600,
+          //                       fontFamily: 'Poppins',
+          //                     ),
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: FlashsaleCountdownTile(
+          //                     digit: minutes[0],
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: FlashsaleCountdownTile(
+          //                     digit: minutes[1],
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: Text(
+          //                     ':',
+          //                     style: TextStyle(
+          //                       color: Colors.white,
+          //                       fontSize: 16,
+          //                       fontWeight: FontWeight.w600,
+          //                       fontFamily: 'Poppins',
+          //                     ),
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: FlashsaleCountdownTile(
+          //                     digit: seconds[0],
+          //                   ),
+          //                 ),
+          //                 Padding(
+          //                   padding: const EdgeInsets.only(right: 2.0),
+          //                   child: FlashsaleCountdownTile(
+          //                     digit: seconds[1],
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //       Row(
+          //         children: [
+          //           Expanded(
+          //             child: Container(
+          //               height: 310,
+          //               child: ListView(
+          //                 shrinkWrap: true,
+          //                 physics: BouncingScrollPhysics(),
+          //                 scrollDirection: Axis.horizontal,
+          //                 children: List.generate(
+          //                   dataList.length,
+          //                   (index) => Padding(
+          //                     padding: const EdgeInsets.only(left: 16.0),
+          //                     child: Column(
+          //                       crossAxisAlignment: CrossAxisAlignment.start,
+          //                       children: [
+          //                         ItemCard(
+          //                           product: dataList[index],
+          //                           titleColor: AppColor.primarySoft,
+          //                           priceColor: AppColor.accent,
+          //                         ),
+          //                         Container(
+          //                           width: 180,
+          //                           child: Row(
+          //                             children: [
+          //                               Expanded(
+          //                                 child: Padding(
+          //                                   padding: const EdgeInsets.symmetric(
+          //                                       horizontal: 8.0),
+          //                                   child: ClipRRect(
+          //                                     borderRadius:
+          //                                         BorderRadius.circular(10),
+          //                                     child: LinearProgressIndicator(
+          //                                       minHeight: 10,
+          //                                       value: 0.4,
+          //                                       color: AppColor.accent,
+          //                                       backgroundColor:
+          //                                           AppColor.border,
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                               Icon(
+          //                                 Icons.local_fire_department,
+          //                                 color: AppColor.accent,
+          //                               ),
+          //                             ],
+          //                           ),
+          //                         ),
+          //                         // Row(
+          //                         //   children: [
+          //                         //     Expanded(
+          //                         //       child: Container(
+          //                         //         color: Colors.amber,
+          //                         //         height: 10,
+          //                         //       ),
+          //                         //     ),
+          //                         //   ],
+          //                         // ),
+          //                       ],
+          //                     ),
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
 
           // Section 5 - product list
 

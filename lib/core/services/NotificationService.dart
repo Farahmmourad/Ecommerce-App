@@ -4,6 +4,7 @@ class NotificationService {
   static List<UserNotification> listNotification = notificationListRawData.map((data) => UserNotification.fromJson(data)).toList();
 }
 
+
 var notificationListRawData = [
   {
     'image_url': 'assets/images/nikeblack.jpg',

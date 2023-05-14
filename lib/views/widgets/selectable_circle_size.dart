@@ -8,6 +8,7 @@ class SelectableCircleSize extends StatefulWidget {
   final Color baseColor;
   final TextStyle selectedTextStyle;
   final TextStyle textStyle;
+  final dynamic changeSize;
 
   final EdgeInsetsGeometry margin, padding;
   SelectableCircleSize({
@@ -18,6 +19,7 @@ class SelectableCircleSize extends StatefulWidget {
     this.baseColor,
     this.textStyle,
     this.selectedTextStyle,
+    this.changeSize,
   });
 
   @override
@@ -25,7 +27,7 @@ class SelectableCircleSize extends StatefulWidget {
 }
 
 class _SelectableCircleState extends State<SelectableCircleSize> {
-  int _selectedIndex;
+  int _selectedIndex = 0;
 
   _change(index) {
     setState(() {
@@ -67,6 +69,8 @@ class _SelectableCircleState extends State<SelectableCircleSize> {
             return InkWell(
               onTap: () {
                 _change(index);
+                dynamic changeSize = widget.changeSize;
+                changeSize(index);
               },
               child: Container(
                 width: 46,

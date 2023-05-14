@@ -15,6 +15,16 @@ class ItemCard extends StatelessWidget {
     this.priceColor = AppColor.primary,
   });
 
+  getAverageRating() {
+    double average = 0.0;
+    for (var i = 0; i < product.reviews.length; i++) {
+      average += product.reviews[i].rating;
+    }
+    double calcualtedAverage = average / product.reviews.length;
+    double truncatedNumber = double.parse(calcualtedAverage.toStringAsFixed(1));
+    return truncatedNumber;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -39,7 +49,8 @@ class ItemCard extends StatelessWidget {
                 image: DecorationImage(
                     image: AssetImage(product.image[0]), fit: BoxFit.cover),
               ),
-              child: RatingTag(value: product.rating),
+              //change this later to average of all ratings of reviews
+              child: (product.reviews.length != 0) ? RatingTag(value: getAverageRating()) : null,
             ),
 
             // item details
@@ -60,7 +71,7 @@ class ItemCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: 2, bottom: 8),
                     child: Text(
-                      '${product.price}',
+                      '\$${product.price}',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -70,7 +81,7 @@ class ItemCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${product.storeName}',
+                    '${product.category}',
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 10,

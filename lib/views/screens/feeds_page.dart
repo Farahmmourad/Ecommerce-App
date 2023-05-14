@@ -21,6 +21,8 @@ class _FeedsPageState extends State<FeedsPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+
+
   }
 
   @override

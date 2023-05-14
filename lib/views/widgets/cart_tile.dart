@@ -1,15 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:marketky/constant/app_color.dart';
 import 'package:marketky/core/model/Cart.dart';
+import 'package:marketky/core/services/CartService.dart';
 
 class CartTile extends StatelessWidget {
   final Cart data;
   CartTile({@required this.data});
   @override
   Widget build(BuildContext context) {
+    String email = FirebaseAuth.instance.currentUser.email;
+
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 80,
+      height: 130,
       padding: EdgeInsets.only(top: 5, left: 5, bottom: 5, right: 12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -40,6 +44,14 @@ class CartTile extends StatelessWidget {
                   '${data.name}',
                   style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'poppins', color: AppColor.secondary),
                 ),
+                Text(
+                  '\Color : ${data.colorName}',
+                  style: TextStyle(fontWeight: FontWeight.w300, fontFamily: 'poppins', color: AppColor.secondary),
+                ),
+                Text(
+                  '\Size : ${data.sizeName}',
+                  style: TextStyle(fontWeight: FontWeight.w300, fontFamily: 'poppins', color: AppColor.secondary),
+                ),
                 // Product Price - Increment Decrement Button
                 Container(
                   margin: EdgeInsets.only(top: 4),
@@ -49,7 +61,7 @@ class CartTile extends StatelessWidget {
                       // Product Price
                       Expanded(
                         child: Text(
-                          '${data.price}',
+                          '\$${data.price * data.count}',
                           style: TextStyle(fontWeight: FontWeight.w700, fontFamily: 'poppins', color: AppColor.primary),
                         ),
                       ),
@@ -65,6 +77,8 @@ class CartTile extends StatelessWidget {
                           children: [
                             InkWell(
                               onTap: () {
+                                //here I want to change the count of the product count in db
+                                modifyCartPlusMinus(email, data, false);
                                 print('minus');
                               },
                               child: Container(
@@ -93,6 +107,7 @@ class CartTile extends StatelessWidget {
                             ),
                             InkWell(
                               onTap: () {
+                                modifyCartPlusMinus(email, data, true);
                                 print('plus');
                               },
                               child: Container(

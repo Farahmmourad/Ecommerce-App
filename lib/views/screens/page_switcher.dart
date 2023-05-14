@@ -42,6 +42,7 @@ class _PageSwitcherState extends State<PageSwitcher> {
             (_selectedIndex == 1)
                 ? BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Category-active.svg'), label: '')
                 : BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Category.svg'), label: ''),
+            //change the icon here
             (_selectedIndex == 2)
                 ? BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Notification-active.svg'), label: '')
                 : BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/Notification.svg'), label: ''),
