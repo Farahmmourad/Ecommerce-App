@@ -33,6 +33,9 @@ class _ProductDetailState extends State<ProductDetail> {
   int _selectedIndex = 0;
   String email = FirebaseAuth.instance.currentUser.email;
   List<dynamic> listOfReview = [];
+  bool found = false;
+  String productname = '';
+  String saveIcon = '';
 
 // Define a TextEditingController for the review text field
   final TextEditingController _reviewController = TextEditingController();
@@ -57,6 +60,8 @@ class _ProductDetailState extends State<ProductDetail> {
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('users');
   List<dynamic> userList = [];
 
+
+
   void addtoWishlist(Product product) async {
 
     databaseReference.once().then((DatabaseEvent event) async {
@@ -69,20 +74,34 @@ class _ProductDetailState extends State<ProductDetail> {
 
       dataMap.forEach((key, value) async {
         if (value['email'] == email) {
-          await databaseReference.child(key).child('wishlist').push().set(product.toJson());
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Added to your wish list')),
-          );
+          found = false;
+          value['wishlist'].forEach((key1,value1){
+            if(value1['name'] == product.name){
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Already Added')),
+              );
+              found = true;
+            }
+          });
+          if(!found){
+            await databaseReference.child(key).child('wishlist').push().set(product.toJson());
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Added to your wish list')),
+            );
+          }
+
         }
       });
 
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     Product product = widget.product;
-
+    productname = product.name;
     setState(() {
       listOfReview = product.reviews;
     });
@@ -181,8 +200,7 @@ class _ProductDetailState extends State<ProductDetail> {
               CustomAppBar(
                 title: '${product.name}',
                 leftIcon: SvgPicture.asset('assets/icons/Arrow-left.svg'),
-                rightIcon: SvgPicture.asset(
-                  'assets/icons/Bookmark.svg',
+                rightIcon: SvgPicture.asset('assets/icons/Bookmark.svg',
                   color: Colors.black.withOpacity(0.5),
                 ),
                 leftOnTap: () {

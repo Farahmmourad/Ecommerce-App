@@ -92,7 +92,7 @@ class _DetailOrderState extends State<DetailOrder> {
                         return ListTile(
 
                           title: Text(_cart[index].name),
-                          subtitle: Text(_cart[index].price.toString()),
+                          subtitle: Text(_cart[index].price.toString()+'\$'),
                           onTap: () {
                             // TODO: Implement color editing
                           },
