@@ -20,6 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   final fb = FirebaseDatabase.instance;
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool _showPassword = true;
+
   @override
   Widget build(BuildContext context) {
     final ref = fb.ref().child('users');
@@ -103,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
             controller: email,
             autofocus: false,
             decoration: InputDecoration(
-              hintText: 'youremail@email.com',
+              hintText: 'Email *',
               prefixIcon: Container(
                 padding: EdgeInsets.all(12),
                 child: SvgPicture.asset('assets/icons/Message.svg', color: AppColor.primary),
@@ -126,9 +128,9 @@ class _LoginPageState extends State<LoginPage> {
           TextField(
             controller: password,
             autofocus: false,
-            obscureText: true,
+            obscureText: _showPassword,
             decoration: InputDecoration(
-              hintText: '**********',
+              hintText: 'Password *',
               prefixIcon: Container(
                 padding: EdgeInsets.all(12),
                 child: SvgPicture.asset('assets/icons/Lock.svg', color: AppColor.primary),
@@ -146,8 +148,14 @@ class _LoginPageState extends State<LoginPage> {
               filled: true,
               //
               suffixIcon: IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset('assets/icons/Hide.svg', color: AppColor.primary),
+                onPressed: () {
+                  setState(() {
+                    _showPassword = !_showPassword;
+                  });
+                },
+                icon: !_showPassword
+                    ? SvgPicture.asset('assets/icons/Show.svg', color: AppColor.primary)
+                    : SvgPicture.asset('assets/icons/Hide.svg', color: AppColor.primary),
               ),
             ),
           ),
@@ -170,6 +178,14 @@ class _LoginPageState extends State<LoginPage> {
           // Sign In button
           ElevatedButton(
             onPressed: () async {
+
+              if (email.text.isEmpty || password.text.isEmpty) {
+                // Show an error message if either field is empty
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Please fill all the required fields')),
+                );
+              }
+
               try {
                 final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                     email: email.text,
@@ -178,8 +194,36 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageSwitcher()));
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Error'),
+                      content: Text('User not found.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
                   log('No user found for that email.' as num);
                 } else if (e.code == 'wrong-password') {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Error'),
+                      content: Text('Wrong password.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
                   log('Wrong password provided for that user.' as num);
                 }
               } catch (e) {

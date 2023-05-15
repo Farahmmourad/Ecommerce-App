@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:marketky/core/model/Cart.dart';
@@ -78,11 +79,15 @@ void addToCart(String email , Product product, String colorName, String sizeName
 
       cartList.add(cartMap);
 
+      var rng = Random();
+      var k = rng.nextInt(10000).toString();
+
       databaseReference.push().set({
         'email': email,
         'active': true,
         'cart': cartList,
         'status': 'pending',
+        'orderId': k,
       });
     }
   });

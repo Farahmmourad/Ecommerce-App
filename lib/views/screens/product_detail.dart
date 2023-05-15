@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marketky/constant/app_color.dart';
@@ -12,6 +13,7 @@ import 'package:marketky/views/widgets/selectable_circle_color.dart';
 import 'package:marketky/views/widgets/selectable_circle_size.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../core/model/Review.dart';
 import '../../core/services/ProductService.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -27,6 +29,7 @@ class _ProductDetailState extends State<ProductDetail> {
   PageController productImageSlider = PageController();
 
   int _selectedIndex = 0;
+  List<dynamic> listOfReview = [];
 
 // Define a TextEditingController for the review text field
   final TextEditingController _reviewController = TextEditingController();
@@ -51,6 +54,10 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     Product product = widget.product;
+
+    setState(() {
+      listOfReview = product.reviews;
+    });
 
     getAverageRating() {
         double average = 0.0;
@@ -77,20 +84,6 @@ class _ProductDetailState extends State<ProductDetail> {
         ),
         child: Row(
           children: [
-            Container(
-              width: 64,
-              height: 64,
-              margin: EdgeInsets.only(right: 14),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.secondary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 0,
-                ),
-                onPressed: () {},
-                child: SvgPicture.asset('assets/icons/Chat.svg', color: Colors.white),
-              ),
-            ),
             Expanded(
               child: SizedBox(
                 height: 64,
@@ -348,7 +341,35 @@ class _ProductDetailState extends State<ProductDetail> {
                 String review = _reviewController.text;
                 double stars = _rating;
 
-                addReview(product, review, stars.toDouble());
+                if (review.isEmpty || _rating == 0) {
+                  // Show an error message to the user indicating that all fields are required
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill the required fields for your review')),
+                  );
+                } else {
+
+                  String email = FirebaseAuth.instance.currentUser.email;
+
+                  Review review2 = new Review();
+                  review2.name = email;
+                  review2.rating = stars;
+                  review2.review = review;
+
+                  listOfReview.add(review2);
+
+                  List<dynamic> newListOfReviews = listOfReview;
+
+                  setState(() {
+                    listOfReview = newListOfReviews;
+                  });
+
+                  // Call the checkoutCart function and navigate to the OrderSuccessPage
+                  addReview(product, review, stars.toDouble());
+
+                  _reviewController.text = '';
+                  _rating = 0;
+                }
+
               },
               child: Text('Add Review'),
               style: ElevatedButton.styleFrom(
@@ -384,9 +405,9 @@ class _ProductDetailState extends State<ProductDetail> {
                     ListView.separated(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) => ReviewTile(review: product.reviews[index]),
+                      itemBuilder: (context, index) => ReviewTile(review: listOfReview[index]),
                       separatorBuilder: (context, index) => SizedBox(height: 16),
-                      itemCount: product.reviews.length,
+                      itemCount: listOfReview.length,
                     ),
                     // Container(
                     //   margin: EdgeInsets.only(left: 52, top: 12, bottom: 6),

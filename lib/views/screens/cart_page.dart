@@ -128,9 +128,18 @@ class _CartPageState extends State<CartPage> {
             border: Border(top: BorderSide(color: AppColor.border, width: 1))),
         child: ElevatedButton(
           onPressed: () {
-            checkoutCart(email, _nameController.text,_addressController.text, _phoneNumberController.text, DateTime.now().toString());
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => OrderSuccessPage()));
+
+            if (_nameController.text.isEmpty || _addressController.text.isEmpty || _phoneNumberController.text.isEmpty) {
+              // Show an error message to the user indicating that all fields are required
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Please fill all the required fields')),
+              );
+            } else {
+              // Call the checkoutCart function and navigate to the OrderSuccessPage
+              checkoutCart(email, _nameController.text, _addressController.text, _phoneNumberController.text, DateTime.now().toString());
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => OrderSuccessPage()));
+            }
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -215,21 +224,6 @@ class _CartPageState extends State<CartPage> {
                             fontWeight: FontWeight.w600,
                             color: AppColor.secondary),
                       ),
-                      // ElevatedButton(
-                      //   onPressed: () {},
-                      //   child: SvgPicture.asset(
-                      //     'assets/icons/Pencil.svg',
-                      //     width: 16,
-                      //     color: AppColor.secondary,
-                      //   ),
-                      //   style: ElevatedButton.styleFrom(
-                      //     foregroundColor: AppColor.primary,
-                      //     shape: CircleBorder(),
-                      //     backgroundColor: AppColor.border,
-                      //     elevation: 0,
-                      //     padding: EdgeInsets.all(0),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -247,7 +241,7 @@ class _CartPageState extends State<CartPage> {
                         child: TextFormField(
                           controller: _nameController,
                           decoration: InputDecoration(
-                            hintText: 'Type your name ...',
+                            hintText: 'Type your name *',
                             hintStyle: TextStyle(color: AppColor.secondary.withOpacity(0.7)),
                             border: InputBorder.none,
                           ),
@@ -274,7 +268,7 @@ class _CartPageState extends State<CartPage> {
                         child: TextFormField(
                           controller: _addressController,
                           decoration: InputDecoration(
-                            hintText: 'Type your address ...',
+                            hintText: 'Type your address *',
                             hintStyle: TextStyle(color: AppColor.secondary.withOpacity(0.7)),
                             border: InputBorder.none,
                           ),
@@ -301,7 +295,7 @@ class _CartPageState extends State<CartPage> {
                         child: TextFormField(
                           controller: _phoneNumberController,
                           decoration: InputDecoration(
-                            hintText: 'Type your phone number ...',
+                            hintText: 'Type your phone number *',
                             hintStyle: TextStyle(color: AppColor.secondary.withOpacity(0.7)),
                             border: InputBorder.none,
                           ),

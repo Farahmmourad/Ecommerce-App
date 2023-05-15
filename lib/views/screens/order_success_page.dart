@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marketky/constant/app_color.dart';
 import 'package:marketky/views/screens/page_switcher.dart';
 
+import 'notification_page.dart';
+
 class OrderSuccessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,9 @@ class OrderSuccessPage extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 16),
               width: MediaQuery.of(context).size.width,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => NotificationPage()));
+                },
                 child: Text(
                   'Your Orders',
                   style: TextStyle(color: AppColor.secondary, fontWeight: FontWeight.w500),

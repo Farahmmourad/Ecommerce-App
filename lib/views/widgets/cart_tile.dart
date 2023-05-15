@@ -30,7 +30,8 @@ class CartTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColor.border,
               borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(image: AssetImage(data.image[0]), fit: BoxFit.cover),
+              image: DecorationImage(
+                  image: NetworkImage(data.image[0]), fit: BoxFit.cover),
             ),
           ),
           // Info

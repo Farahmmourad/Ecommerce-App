@@ -15,11 +15,16 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<RegisterPage> {
+  bool _showPassword = true;
+  bool _showRepeatPassword = true;
+
   final fb = FirebaseDatabase.instance;
   TextEditingController fullname = TextEditingController();
   TextEditingController username = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController repeatpassword = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     var rng = Random();
@@ -100,7 +105,7 @@ class _LoginPageState extends State<RegisterPage> {
             controller: fullname,
             autofocus: false,
             decoration: InputDecoration(
-              hintText: 'Full Name',
+              hintText: 'Full Name *',
               prefixIcon: Container(
                 padding: EdgeInsets.all(12),
                 child: SvgPicture.asset('assets/icons/Profile.svg', color: AppColor.primary),
@@ -124,7 +129,7 @@ class _LoginPageState extends State<RegisterPage> {
             controller: username,
             autofocus: false,
             decoration: InputDecoration(
-              hintText: 'Username',
+              hintText: 'Username *',
               prefixIcon: Container(
                 padding: EdgeInsets.all(12),
                 child: Text('@', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColor.primary)),
@@ -149,7 +154,7 @@ class _LoginPageState extends State<RegisterPage> {
             autofocus: false,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              hintText: 'youremail@email.com',
+              hintText: 'Email *',
               prefixIcon: Container(
                 padding: EdgeInsets.all(12),
                 child: SvgPicture.asset('assets/icons/Message.svg', color: AppColor.primary),
@@ -172,9 +177,9 @@ class _LoginPageState extends State<RegisterPage> {
           TextField(
             controller: password,
             autofocus: false,
-            obscureText: true,
+            obscureText: _showPassword,
             decoration: InputDecoration(
-              hintText: 'Password',
+              hintText: 'Password *',
               prefixIcon: Container(
                 padding: EdgeInsets.all(12),
                 child: SvgPicture.asset('assets/icons/Lock.svg', color: AppColor.primary),
@@ -192,18 +197,25 @@ class _LoginPageState extends State<RegisterPage> {
               filled: true,
               //
               suffixIcon: IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset('assets/icons/Hide.svg', color: AppColor.primary),
+                onPressed: () {
+                  setState(() {
+                    _showPassword = !_showPassword;
+                  });
+                },
+                icon: !_showPassword
+                    ? SvgPicture.asset('assets/icons/Show.svg', color: AppColor.primary)
+                    : SvgPicture.asset('assets/icons/Hide.svg', color: AppColor.primary),
               ),
             ),
           ),
           SizedBox(height: 16),
           // Repeat Password
           TextField(
+            controller: repeatpassword,
             autofocus: false,
-            obscureText: true,
+            obscureText: _showRepeatPassword,
             decoration: InputDecoration(
-              hintText: 'Repeat Password',
+              hintText: 'Repeat Password *',
               prefixIcon: Container(
                 padding: EdgeInsets.all(12),
                 child: SvgPicture.asset('assets/icons/Lock.svg', color: AppColor.primary),
@@ -221,8 +233,14 @@ class _LoginPageState extends State<RegisterPage> {
               filled: true,
               //
               suffixIcon: IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset('assets/icons/Hide.svg', color: AppColor.primary),
+                onPressed: () {
+                  setState(() {
+                    _showRepeatPassword = !_showRepeatPassword;
+                  });
+                },
+                icon: !_showRepeatPassword
+                    ? SvgPicture.asset('assets/icons/Show.svg', color: AppColor.primary)
+                    : SvgPicture.asset('assets/icons/Hide.svg', color: AppColor.primary),
               ),
             ),
           ),
@@ -230,31 +248,92 @@ class _LoginPageState extends State<RegisterPage> {
           // Sign Up Button
           ElevatedButton(
             onPressed: () async {
-              try {
-                final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email.text,
-                  password: password.text,
+
+              if (username.text.isEmpty || fullname.text.isEmpty
+                  || email.text.isEmpty || password.text.isEmpty
+                  || repeatpassword.text.isEmpty) {
+                // Show an error message if either field is empty
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Please fill all the required fields')),
                 );
+              }else {
+                if (password.text != repeatpassword.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(
+                        'Password and repeat password does not match')),
+                  );
+                } else {
+                  try {
+                    final credential = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                      email: email.text,
+                      password: password.text,
+                    );
 
-                ref.set({
-                  "fullName": fullname.text,
-                  "username": username.text,
-                  "email": email.text,
-                  "password": password.text,
-                }).asStream();
+                    ref.set({
+                      "fullName": fullname.text,
+                      "username": username.text,
+                      "email": email.text,
+                      "password": password.text,
+                    }).asStream();
 
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  log('The password provided is too weak.' as num);
-                } else if (e.code == 'email-already-in-use') {
-                  log('The account already exists for that email.' as num);
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AlertDialog(
+                            title: Text('Error'),
+                            content: Text(
+                                'Account successfully created, you will soon redirected to the login page.'),
+                          ),
+                    );
+
+                    Future.delayed(Duration(seconds: 2), () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+                    });
+
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'weak-password') {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            AlertDialog(
+                              title: Text('Error'),
+                              content: Text(
+                                  'The password provided is too weak.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      log('The password provided is too weak.' as num);
+                    } else if (e.code == 'email-already-in-use') {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            AlertDialog(
+                              title: Text('Error'),
+                              content: Text(
+                                  'The account already exists for that email.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      log('The account already exists for that email.' as num);
+                    }
+                  } catch (e) {
+                    print(e);
+                  }
                 }
-              } catch (e) {
-                print(e);
               }
-
-
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => OTPVerificationPage()));
             },
             child: Text(
               'Sign up',

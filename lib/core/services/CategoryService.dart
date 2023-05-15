@@ -13,21 +13,21 @@ var categoryRawData = [
   {
     'featured': false,
     'icon_url': 'assets/icons/shirts-garment-fashion-woman-man-wear-svgrepo-com.svg',
-    'name': 'woman shirts',
+    'name': 'women shirts',
   },
   {
     'featured': false,
     'icon_url': 'assets/icons/Woman-dress.svg',
-    'name': 'woman dresses',
+    'name': 'women dresses',
   },
   {
     'featured': false,
     'icon_url': 'assets/icons/Man-Pants.svg',
-    'name': 'woman pants',
+    'name': 'women pants',
   },
   {
     'featured': false,
     'icon_url': 'assets/icons/skirt-svgrepo-com.svg',
-    'name': 'woman skirts',
+    'name': 'women skirts',
   },
 ];
