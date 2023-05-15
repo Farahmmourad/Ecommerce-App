@@ -11,6 +11,8 @@ import 'package:marketky/views/widgets/custom_icon_button_widget.dart';
 import 'package:marketky/views/widgets/dummy_search_widget2.dart';
 
 import '../../core/model/Cart.dart';
+import '../../core/model/Product.dart';
+import '../../core/services/MySearchDelegate.dart';
 import '../screens/empty_cart_page.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -30,12 +32,15 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _MainAppBarState extends State<MainAppBar> {
+  final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
   final DatabaseReference databaseReferenceOrders = FirebaseDatabase.instance.ref().child('orders');
   String email = FirebaseAuth.instance.currentUser.email;
   int totalItemsInCart = 0;
   bool isEmpty = true;
   dynamic cartDataList = [];
   dynamic totalPrice = 0;
+  MySearchDelegate _searchDelegate;
+  dynamic dataList = [];
 
   @override
   void initState() {
@@ -75,6 +80,20 @@ class _MainAppBarState extends State<MainAppBar> {
       });
     });
 
+    databaseReference.onValue.listen((event) {
+      setState(() {
+        Map<dynamic, dynamic> dataList1 = event.snapshot.value;
+        List<Map<String, Object>> mappedList2 = [];
+        dataList1.forEach((key, value) {
+          Map<String, Object> mappedItem = Map<String, Object>.from(value);
+          mappedList2.add(mappedItem);
+        });
+        List<Product> products = mappedList2.map((data) => Product.fromJson(data)).toList();
+        dataList = products;
+        _searchDelegate = MySearchDelegate(items: products);
+      });
+    });
+
   }
 
   @override
@@ -87,12 +106,12 @@ class _MainAppBarState extends State<MainAppBar> {
       title: Row(
         children: [
           DummySearchWidget2(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(),
-                ),
+            onTap: () async {
+              final result = await showSearch(
+                context: context,
+                delegate: _searchDelegate,
               );
+              print(result);
             },
           ),
           CustomIconButtonWidget(

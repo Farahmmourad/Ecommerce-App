@@ -1,9 +1,15 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../constant/app_color.dart';
 import '../../core/model/ColorWay.dart';
 import '../../core/model/Product.dart';
 import '../../core/model/ProductSize.dart';
+import '../../core/model/Review.dart';
 
 class EditPage extends StatefulWidget {
   final Product product;
@@ -37,10 +43,33 @@ class _EditPageState extends State<EditPage> {
     super.initState();
 
   }
+
+  final ImagePicker _picker = ImagePicker();
+  XFile _pickedFile;
+  String imageUrl;
+
+  void _pickImage() async {
+    _pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    print('${_pickedFile?.path}');
+    if(_pickedFile == null) return;
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference refrenceRoot = FirebaseStorage.instance.ref();
+    Reference refrenceDirImage = refrenceRoot.child('images');
+    Reference refrenceImageToUpload = refrenceDirImage.child(uniqueFileName);
+    try{
+      await refrenceImageToUpload.putFile(File(_pickedFile.path));
+      imageUrl = await refrenceImageToUpload.getDownloadURL();
+      setState(() {
+        _images.add(imageUrl);
+      });
+    }
+    catch(error){
+    }
+  }
   // Define a function to edit a product
-  void editProduct(BuildContext context, Product product) async {
+  void editProduct(BuildContext context, Product product)  {
     // Navigate to the edit product page and get the updated product data
-    databaseReference.onValue.listen((event) async {
+    databaseReference.once().then((DatabaseEvent event) async {
       Map<dynamic, dynamic> dataMap = event.snapshot.value;
 
       if (dataMap == null) {
@@ -50,19 +79,21 @@ class _EditPageState extends State<EditPage> {
 
       for (var key in dataMap.keys) {
         Product product1 = Product.fromJson(Map<String, dynamic>.from(dataMap[key]));
-        if (product1.name == product.name){
-          productId = key.toString();
+        if (product1.name == product.name) {
+          String productId = key.toString();
           DatabaseReference productRef =
-          FirebaseDatabase.instance.ref().child('products').child(productId);
+          databaseReference.child(productId);
           await productRef.set(product.toJson());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Product updated')),
+          );
+          return;
         }
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Product not found')),
+      );
     });
-
-    // Show a success message and navigate back to the product list page
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Product updated')),
-    );
     Navigator.pop(context);
   }
   @override
@@ -70,6 +101,8 @@ class _EditPageState extends State<EditPage> {
     Product product = widget.product;
     _colors = product.colors;
     _sizes = product.sizes;
+
+
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
@@ -84,6 +117,18 @@ class _EditPageState extends State<EditPage> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (_pickedFile != null)
+                      Image.file(File(_pickedFile.path))
+                    else
+                      Text('No image selected'),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _pickImage,
+                      child: Text('Select Image'),
+                      style: ElevatedButton.styleFrom(
+                        primary: AppColor.primary, // Change the color here
+                      ),
+                    ),
                     TextFormField(
                       initialValue: '${product.name}',
                       decoration: InputDecoration(
@@ -276,7 +321,9 @@ class _EditPageState extends State<EditPage> {
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
-                          List<String> images = ['assets/images/nikegrey.jpg','assets/images/nikeblack.jpg'];
+                          for (var image in product.image){
+                            _images.add(image);
+                          }
                           Product newProduct = Product(
                             name: _name,
                             price: _price,
@@ -284,8 +331,8 @@ class _EditPageState extends State<EditPage> {
                             description: _description,
                             colors: _colors,
                             sizes: _sizes,
-                            image: images,
-                            reviews: [],
+                            image: _images,
+                            reviews: product.reviews,
                           );
                           editProduct(context, newProduct);
                         }
