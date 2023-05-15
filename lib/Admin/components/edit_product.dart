@@ -261,28 +261,14 @@ class _EditPageState extends State<EditPage> {
                       itemCount: _sizes.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(_sizes[index].name),
-                          subtitle: Text(_sizes[index].size.toString()),
+                          title: Text(_sizes[index].size),
                           onTap: () {
                             // TODO: Implement color editing
                           },
                         );
                       },
                     ),
-                    TextFormField(
-                      controller: _sizeNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Size Name',
-                      ),
-                      maxLines: 3,
-                      // validator: (value) {
-                      //   if (value.isEmpty) {
-                      //     return 'Please enter a size name';
-                      //   }
-                      //   return null;
-                      // },
 
-                    ),
 
                     TextFormField(
                       controller: _sizeTypeController,
@@ -305,7 +291,7 @@ class _EditPageState extends State<EditPage> {
                         // TODO: Implement color adding
                         setState(() {
                           _sizes.add(
-                              ProductSize(name: _sizeNameController.text, size: _sizeTypeController.text)
+                              ProductSize(name: '35', size: _sizeTypeController.text)
                           );
                         });
 

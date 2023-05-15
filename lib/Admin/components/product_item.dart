@@ -70,7 +70,7 @@ class ProductItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${product.price}',
+              '${product.price}\$',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -79,7 +79,7 @@ class ProductItem extends StatelessWidget {
               ),
             ),
             Text(
-              '${product.storeName}',
+              '${product.category}',
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 10,
