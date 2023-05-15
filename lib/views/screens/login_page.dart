@@ -163,13 +163,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainAdmin()));
-              },
-              child: Text(
-                'Admin ?',
-                style: TextStyle(fontSize: 12, color: AppColor.secondary.withOpacity(0.5), fontWeight: FontWeight.w700),
-              ),
+
               style: TextButton.styleFrom(
                 foregroundColor: AppColor.primary.withOpacity(0.1),
               ),
@@ -191,7 +185,13 @@ class _LoginPageState extends State<LoginPage> {
                     email: email.text,
                     password: password.text
                 );
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageSwitcher()));
+                if(credential.user.email == "admin@gmail.com"){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainAdmin()));
+                }
+                else{
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageSwitcher()));
+                }
+
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
                   showDialog(

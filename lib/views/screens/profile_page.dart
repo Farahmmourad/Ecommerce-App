@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marketky/constant/app_color.dart';
+import 'package:marketky/views/screens/login_page.dart';
+import 'package:marketky/views/screens/wishlist.dart';
 import 'package:marketky/views/widgets/main_app_bar_widget.dart';
 import 'package:marketky/views/widgets/menu_tile_widget.dart';
 
@@ -10,6 +13,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +62,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 MenuTileWidget(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => WishList()));
+                  },
                   margin: EdgeInsets.only(top: 10),
                   icon: SvgPicture.asset(
                     'assets/icons/Heart.svg',
@@ -74,7 +86,10 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MenuTileWidget(
-                  onTap: () {},
+                  onTap: () {
+                    signOut();
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+                  },
                   icon: SvgPicture.asset(
                     'assets/icons/Log Out.svg',
                     color: Colors.red,

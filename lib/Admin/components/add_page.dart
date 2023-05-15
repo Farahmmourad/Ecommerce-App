@@ -53,7 +53,10 @@ class _AddPageState extends State<AddPage> {
     try{
       await refrenceImageToUpload.putFile(File(_pickedFile.path));
       imageUrl = await refrenceImageToUpload.getDownloadURL();
-      _images.add(imageUrl);
+
+      setState(() {
+        _images.add(imageUrl);
+      });
     }
     catch(error){
     }

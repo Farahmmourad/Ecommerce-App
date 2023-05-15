@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marketky/constant/app_color.dart';
@@ -29,6 +31,7 @@ class _ProductDetailState extends State<ProductDetail> {
   PageController productImageSlider = PageController();
 
   int _selectedIndex = 0;
+  String email = FirebaseAuth.instance.currentUser.email;
   List<dynamic> listOfReview = [];
 
 // Define a TextEditingController for the review text field
@@ -48,6 +51,31 @@ class _ProductDetailState extends State<ProductDetail> {
   _changeSize(index) {
     setState(() {
       _selectedIndexSize = index;
+    });
+  }
+
+  final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('users');
+  List<dynamic> userList = [];
+
+  void addtoWishlist(Product product) async {
+
+    databaseReference.once().then((DatabaseEvent event) async {
+      Map<dynamic, dynamic> dataMap = event.snapshot.value;
+
+      if (dataMap == null) {
+        userList = [];
+        return;
+      }
+
+      dataMap.forEach((key, value) async {
+        if (value['email'] == email) {
+          await databaseReference.child(key).child('wishlist').push().set(product.toJson());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Added to your wish list')),
+          );
+        }
+      });
+
     });
   }
 
@@ -160,7 +188,9 @@ class _ProductDetailState extends State<ProductDetail> {
                 leftOnTap: () {
                   Navigator.of(context).pop();
                 },
-                rightOnTap: () {},
+                rightOnTap: () {
+                  addtoWishlist(product);
+                },
               ),
               // indicator
               Positioned(

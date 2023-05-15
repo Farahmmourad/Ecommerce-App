@@ -9,10 +9,11 @@ class Order {
   String address;
   bool active;
   String status;
+  String orderedOn;
   List<Cart> cart;
 
   Order({@required this.orderId,@required this.email, @required this.name, @required this.phoneNumber,@required this.active,@required this.address,@required this.status
-  ,@required this.cart});
+  ,@required this.cart, @required this.orderedOn});
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
@@ -24,6 +25,7 @@ class Order {
       active: json['active'],
       status: json['status'],
       cart: (json['cart'] as List).map((data) => Cart.fromJson(data)).toList(),
+      orderedOn: json['orderedOn'],
     );
   }
   Map<String, dynamic> toJson() {
@@ -37,6 +39,7 @@ class Order {
       'active': active,
       'status': status,
       'cart': cartList,
+      'orderedOn': orderedOn,
     };
   }
 }

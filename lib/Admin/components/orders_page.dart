@@ -2,6 +2,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:marketky/core/model/Order.dart';
 
+import '../../constant/app_color.dart';
+import '../../views/widgets/notification_tile.dart';
 import 'order_item.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -31,8 +33,11 @@ class _OrdersPageState extends State<OrdersPage> {
       List<dynamic> dataList = dataMap.values.toList();
       List<Order> orders = [];
       for (var data in dataList) {
-        Order order = Order.fromJson(Map<String, dynamic>.from(data));
-        orders.add(order);
+        if(data['active']== false){
+          Order order = Order.fromJson(Map<String, dynamic>.from(data));
+          orders.add(order);
+        }
+
       }
 
       setState(() {
@@ -43,28 +48,39 @@ class _OrdersPageState extends State<OrdersPage> {
 
 
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
+        shrinkWrap: true,
+        physics: BouncingScrollPhysics(),
         children: [
-          SizedBox(height: 20),
-          Text('Orders'),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: List.generate(
-                orderList.length,
-                    (index) =>OrderItem(
-                  order: orderList[index],
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 16, bottom: 8),
+                  child: Text(
+                    'ORDERS HISTORY',
+                    style: TextStyle(color: AppColor.secondary.withOpacity(0.5), letterSpacing: 6 / 100, fontWeight: FontWeight.w600),
+                  ),
                 ),
-              ),
+                ListView.builder(
+                  itemBuilder: (context, index) {
+                    return OrderItem(
+                      order: orderList[index],
+                    );
+                  },
+                  itemCount: orderList.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                ),
+              ],
             ),
-          ),
-
+          )
         ],
       ),
     );
