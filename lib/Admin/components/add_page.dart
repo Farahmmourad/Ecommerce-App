@@ -247,7 +247,7 @@ class _AddPageState extends State<AddPage> {
                     // TODO: Implement color adding
                     setState(() {
                       _sizes.add(
-                          ProductSize(name: '35', size: _sizeTypeController.text)
+                          ProductSize(name: _sizeTypeController.text, size: _sizeTypeController.text)
                       );
                     });
 

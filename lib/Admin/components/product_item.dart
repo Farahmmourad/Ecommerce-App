@@ -38,7 +38,7 @@ class ProductItem extends StatelessWidget {
       }
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Product updated')),
+      SnackBar(content: Text('Product deleted')),
     );
   }
 

@@ -57,7 +57,7 @@ class _DetailOrderState extends State<DetailOrder> {
 
     // Show a success message and navigate back to the product list page
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Product updated')),
+      SnackBar(content: Text('Order updated')),
     );
     Navigator.pop(context);
   }
