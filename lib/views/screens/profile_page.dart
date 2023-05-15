@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: AppColor.secondary.withOpacity(0.5),
                   ),
                   title: 'Wishlist',
-                  subtitle: 'Lorem ipsum Dolor sit Amet',
+                  subtitle: 'Check what on your wishlist!',
                 ),
               ],
             ),

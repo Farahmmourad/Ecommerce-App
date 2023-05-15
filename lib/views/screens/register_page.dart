@@ -281,7 +281,7 @@ class _LoginPageState extends State<RegisterPage> {
                       context: context,
                       builder: (context) =>
                           AlertDialog(
-                            title: Text('Error'),
+                            title: Text('Account created'),
                             content: Text(
                                 'Account successfully created, you will soon redirected to the login page.'),
                           ),

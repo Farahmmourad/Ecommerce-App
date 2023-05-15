@@ -19,21 +19,6 @@ class OrderSuccessPage extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(bottom: 16),
               width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => NotificationPage()));
-                },
-                child: Text(
-                  'Your Orders',
-                  style: TextStyle(color: AppColor.secondary, fontWeight: FontWeight.w500),
-                ),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: AppColor.primary, padding: EdgeInsets.symmetric(vertical: 18), backgroundColor: AppColor.border,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 0,
-                  shadowColor: Colors.transparent,
-                ),
-              ),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width,

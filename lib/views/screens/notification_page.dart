@@ -74,6 +74,8 @@ class _NotificationPageState extends State<NotificationPage> {
               x.cart = cardsItem;
               x.totalPrice = totalPrice;
 
+              totalPrice = 0;
+
               Map<dynamic, dynamic> cartMap = cartToMap(x);
               listodorders = <Map<dynamic, dynamic>>[...listodorders, cartMap];
             }

@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:marketky/core/model/Product.dart';
 import 'package:marketky/views/widgets/dummy_search_widget_1.dart';
 import 'package:marketky/views/widgets/item_card.dart';
@@ -82,15 +83,29 @@ class _WishListState extends State<WishList> {
             ),
             child: Column(
               children: [
-
-                DummySearchWidget1(
-                  onTap: () async {
-                    final result = await showSearch(
-                      context: context,
-                      delegate: _searchDelegate,
-                    );
-                    print(result);
-                  },
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 22, right: 5), // Adjust the top margin value as needed
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: SvgPicture.asset('assets/icons/Arrow-left.svg'),
+                      ),
+                    ),
+                    Expanded(
+                      child: DummySearchWidget1(
+                        onTap: () async {
+                          final result = await showSearch(
+                            context: context,
+                            delegate: _searchDelegate,
+                          );
+                          print(result);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
