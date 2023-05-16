@@ -71,27 +71,28 @@ class _ProductDetailState extends State<ProductDetail> {
         userList = [];
         return;
       }
-
-      dataMap.forEach((key, value) async {
-        if (value['email'] == email) {
-          found = false;
-          value['wishlist'].forEach((key1,value1){
-            if(value1['name'] == product.name){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Already Added')),
-              );
-              found = true;
-            }
-          });
-          if(!found){
-            await databaseReference.child(key).child('wishlist').push().set(product.toJson());
+  dataMap.forEach((key, value) async {
+    if (value['email'] == email) {
+      found = false;
+      if(value['wishlist'] != null) {
+        value['wishlist'].forEach((key1, value1) {
+          if (value1['name'] == product.name) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Added to your wish list')),
+              SnackBar(content: Text('Already Added')),
             );
+            found = true;
           }
-
-        }
-      });
+        });
+      }
+      if (!found) {
+        await databaseReference.child(key).child('wishlist').push().set(
+            product.toJson());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Added to your wish list')),
+        );
+      }
+    }
+  });
 
     });
   }
