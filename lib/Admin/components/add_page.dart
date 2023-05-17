@@ -27,7 +27,7 @@ class _AddPageState extends State<AddPage> {
   String _description = '';
   List<ColorWay> _colors = [];
   List<ProductSize> _sizes = [];
-  String _category = 'women shirts';
+  String _category = 'all';
   ColorWay _newColor= new ColorWay(name: '', color: '');
 
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
@@ -165,7 +165,6 @@ class _AddPageState extends State<AddPage> {
                 SizedBox(height: 16),
                 Text('Category'),
                 DropdownButton<String>(
-
                   value: _category,
                   onChanged: (newValue) {
                     setState(() {
