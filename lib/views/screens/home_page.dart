@@ -24,9 +24,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Category> categoryData = CategoryService.categoryData;
 
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
+  final DatabaseReference databaseCategoryReference = FirebaseDatabase.instance.ref().child('categories');
   final DatabaseReference databaseReferenceOrders = FirebaseDatabase.instance.ref().child('orders');
   String email = FirebaseAuth.instance.currentUser.email;
   int totalItemsInCart = 0;
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   dynamic cartDataList = [];
   dynamic totalPrice = 0;
   MySearchDelegate _searchDelegate;
-
+  List<Category> categoryList = [];
   dynamic dataList = [];
 
   @override
@@ -53,8 +53,29 @@ class _HomePageState extends State<HomePage> {
         dataList = products;
         _searchDelegate = MySearchDelegate(items: products);
       });
+
     });
 
+
+    databaseCategoryReference.onValue.listen((event) {
+      Map<dynamic, dynamic> dataMap = event.snapshot.value;
+
+      if (dataMap == null) {
+        categoryList = [];
+        return;
+      }
+
+      List<dynamic> dataList = dataMap.values.toList();
+      List<Category> categories = [];
+      for (var data in dataList) {
+        Category category = Category.fromJson(Map<String, dynamic>.from(data));
+        categories.add(category);
+      }
+
+      setState(() {
+        categoryList = categories;
+      });
+    });
 
 
     databaseReferenceOrders.onValue.listen((event) {
@@ -210,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                   height: 96,
                   child: ListView.separated(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: categoryData.length,
+                    itemCount: categoryList.length,
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
@@ -219,14 +240,14 @@ class _HomePageState extends State<HomePage> {
                     },
                     itemBuilder: (context, index) {
                       return CategoryCard(
-                        data: categoryData[index],
+                        data: categoryList[index],
                         onTap: () {
                           setState(() {
-                            query = categoryData[index].name;
-                            for(Category category in categoryData){
+                            query = categoryList[index].name;
+                            for(Category category in categoryList){
                               category.featured = false;
                             }
-                            categoryData[index].featured = true;
+                            categoryList[index].featured = true;
                           });
                         },
                       );

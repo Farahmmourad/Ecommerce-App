@@ -33,6 +33,10 @@ class SideBar extends StatelessWidget {
             onTap: () => onOptionSelected(2),
           ),
           ListTile(
+            title: Text('Categories'),
+            onTap: () => onOptionSelected(3),
+          ),
+          ListTile(
             title: Text('LogOut'),
             onTap: () => {
               signOut(),
