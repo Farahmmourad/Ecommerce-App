@@ -2,16 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:marketky/constant/app_color.dart';
 import 'package:marketky/core/model/Cart.dart';
+import 'package:marketky/views/screens/addreview.dart';
 
 class OrderHistoryCart extends StatelessWidget {
   final Cart data;
-  OrderHistoryCart({@required this.data});
+  final String orderStatus;
+  OrderHistoryCart({@required this.data, @required this.orderStatus});
   @override
   Widget build(BuildContext context) {
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 150,
+      height: 200,
       padding: EdgeInsets.only(top: 5, left: 5, bottom: 5, right: 12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -89,7 +91,34 @@ class OrderHistoryCart extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Increment Decrement Button
+                      // Increment Decrement Button,
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Product Price
+                      if(orderStatus == 'delivered' )
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigate to the review page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddReview(productName : data.name),
+                            ),
+                          );
+                        },
+                        child: Text('Add Review'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: AppColor.primarySoft, elevation: 0, backgroundColor: AppColor.primary,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                      )
+                  // Increment Decrement Button,
                     ],
                   ),
                 ),

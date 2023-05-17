@@ -19,7 +19,9 @@ import 'order_history_cart.dart';
 
 class OrderDetail extends StatefulWidget {
   final List<Cart> cart;
-  OrderDetail({@required this.cart});
+  final String orderStatus;
+
+  OrderDetail({@required this.cart, @required this.orderStatus});
 
   @override
   _OrderDetailState createState() => _OrderDetailState();
@@ -30,6 +32,7 @@ class _OrderDetailState extends State<OrderDetail> {
   @override
   Widget build(BuildContext context) {
     List<Cart> carts = widget.cart;
+    String orderStatus = widget.orderStatus;
 
     return Scaffold(
       appBar: AppBar(
@@ -72,6 +75,7 @@ class _OrderDetailState extends State<OrderDetail> {
             itemBuilder: (context, index) {
               return OrderHistoryCart(
                 data: carts[index],
+                  orderStatus: orderStatus,
               );
             },
             separatorBuilder: (context, index) => SizedBox(height: 16),

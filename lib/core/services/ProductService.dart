@@ -73,4 +73,38 @@ void addReview(Product product , String rev, double starts) async {
   });
 }
 
+void addReviewFromOrders(String productName , String rev, double starts) async {
+  dynamic dataList = [];
+  final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child("products");
 
+  String email = FirebaseAuth.instance.currentUser.email;
+
+  databaseReference.once().then((DatabaseEvent  event) {
+    dataList = event.snapshot.value;
+
+    dataList.forEach((key, value) {
+      if (value['name'] == productName) {
+
+        var listofreviews = value['reviews'];
+
+        Review review = new Review();
+        review.name = email;
+        review.rating = starts;
+        review.review = rev;
+
+        Map<dynamic, dynamic> reviewMap = reviewToMap(review);
+
+        if (listofreviews == null) {
+          listofreviews = [reviewMap];
+        } else {
+          listofreviews = <Map<dynamic, dynamic>>[...listofreviews, reviewMap];
+        }
+
+        databaseReference.child(key).update({
+          'reviews': listofreviews,
+        });
+      }
+    });
+    // }
+  });
+}

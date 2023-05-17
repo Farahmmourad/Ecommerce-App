@@ -322,111 +322,111 @@ class _ProductDetailState extends State<ProductDetail> {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
-            // margin: EdgeInsets.only(top: 8),
-            child: Divider(
-              thickness: 1,
-              color: AppColor.secondary.withOpacity(0.2),
-            ),
-          ),
+          // Container(
+          //   width: double.infinity,
+          //   // margin: EdgeInsets.only(top: 8),
+          //   child: Divider(
+          //     thickness: 1,
+          //     color: AppColor.secondary.withOpacity(0.2),
+          //   ),
+          // ),
           //Add review section
-          Container(
-            margin: EdgeInsets.only(top: 6),
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            // margin: EdgeInsets.only(bottom: 20),
-            child: Row(
-              children: [
-                for (int i = 1; i <= 5; i++)
-                  IconButton(
-                    icon: Icon(
-                      _rating >= i ? Icons.star : Icons.star_border,
-                      color: AppColor.primary,
-                    ),
-                    onPressed: () {
-                      // Update the rating variable when a star is pressed
-                      setState(() {
-                        _rating = i.toDouble();
-                      });
-                    },
-                  ),
-              ],
-            ),
-          ),
-          Container(
-            // margin: EdgeInsets.only(top: 16),
-            margin: EdgeInsets.only(top: 10),
-            // width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 25),
-            child: TextField(
-              controller: _reviewController,
-              decoration: InputDecoration(
-                hintText: 'Write your review...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppColor.primary,
-                    width: 2,
-                  ),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              maxLines: 2,
-            ),
-          ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 6),
+          //   width: MediaQuery.of(context).size.width,
+          //   padding: EdgeInsets.symmetric(horizontal: 16),
+          //   // margin: EdgeInsets.only(bottom: 20),
+          //   child: Row(
+          //     children: [
+          //       for (int i = 1; i <= 5; i++)
+          //         IconButton(
+          //           icon: Icon(
+          //             _rating >= i ? Icons.star : Icons.star_border,
+          //             color: AppColor.primary,
+          //           ),
+          //           onPressed: () {
+          //             // Update the rating variable when a star is pressed
+          //             setState(() {
+          //               _rating = i.toDouble();
+          //             });
+          //           },
+          //         ),
+          //     ],
+          //   ),
+          // ),
+          // Container(
+          //   // margin: EdgeInsets.only(top: 16),
+          //   margin: EdgeInsets.only(top: 10),
+          //   // width: MediaQuery.of(context).size.width,
+          //   padding: EdgeInsets.symmetric(horizontal: 25),
+          //   child: TextField(
+          //     controller: _reviewController,
+          //     decoration: InputDecoration(
+          //       hintText: 'Write your review...',
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(8),
+          //         borderSide: BorderSide(
+          //           color: AppColor.primary,
+          //           width: 2,
+          //         ),
+          //       ),
+          //       contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          //     ),
+          //     maxLines: 2,
+          //   ),
+          // ),
           // Add the star rating section
 
           // Add the "Add Review" button
-          Container(
-            // color: AppColor.secondary,
-            margin: EdgeInsets.only(top: 16, bottom: 10),
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 25),
-            // margin: EdgeInsets.only(top: 24),
-            // width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                String review = _reviewController.text;
-                double stars = _rating;
-
-                if (review.isEmpty || _rating == 0) {
-                  // Show an error message to the user indicating that all fields are required
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill the required fields for your review')),
-                  );
-                } else {
-
-                  String email = FirebaseAuth.instance.currentUser.email;
-
-                  Review review2 = new Review();
-                  review2.name = email;
-                  review2.rating = stars;
-                  review2.review = review;
-
-                  listOfReview.add(review2);
-
-                  List<dynamic> newListOfReviews = listOfReview;
-
-                  setState(() {
-                    listOfReview = newListOfReviews;
-                  });
-
-                  // Call the checkoutCart function and navigate to the OrderSuccessPage
-                  addReview(product, review, stars.toDouble());
-
-                  _reviewController.text = '';
-                  _rating = 0;
-                }
-
-              },
-              child: Text('Add Review'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: AppColor.primarySoft, elevation: 0, backgroundColor: AppColor.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-            ),
-          ),
+          // Container(
+          //   // color: AppColor.secondary,
+          //   margin: EdgeInsets.only(top: 16, bottom: 10),
+          //   width: MediaQuery.of(context).size.width,
+          //   padding: EdgeInsets.symmetric(horizontal: 25),
+          //   // margin: EdgeInsets.only(top: 24),
+          //   // width: double.infinity,
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       String review = _reviewController.text;
+          //       double stars = _rating;
+          //
+          //       if (review.isEmpty || _rating == 0) {
+          //         // Show an error message to the user indicating that all fields are required
+          //         ScaffoldMessenger.of(context).showSnackBar(
+          //           SnackBar(content: Text('Please fill the required fields for your review')),
+          //         );
+          //       } else {
+          //
+          //         String email = FirebaseAuth.instance.currentUser.email;
+          //
+          //         Review review2 = new Review();
+          //         review2.name = email;
+          //         review2.rating = stars;
+          //         review2.review = review;
+          //
+          //         listOfReview.add(review2);
+          //
+          //         List<dynamic> newListOfReviews = listOfReview;
+          //
+          //         setState(() {
+          //           listOfReview = newListOfReviews;
+          //         });
+          //
+          //         // Call the checkoutCart function and navigate to the OrderSuccessPage
+          //         addReview(product, review, stars.toDouble());
+          //
+          //         _reviewController.text = '';
+          //         _rating = 0;
+          //       }
+          //
+          //     },
+          //     child: Text('Add Review'),
+          //     style: ElevatedButton.styleFrom(
+          //       foregroundColor: AppColor.primarySoft, elevation: 0, backgroundColor: AppColor.primary,
+          //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          //     ),
+          //   ),
+          // ),
 
           // Section 5 - Reviews
           Container(

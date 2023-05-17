@@ -19,7 +19,7 @@ class NotificationTile extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => OrderDetail(cart: data.cart)));
+            builder: (context) => OrderDetail(cart: data.cart, orderStatus : data.status)));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
