@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:marketky/Admin/components/category_page.dart';
 import 'package:marketky/constant/app_color.dart';
 
 import 'components/orders_page.dart';
@@ -9,6 +10,7 @@ import 'components/sidebar.dart';
 final Map<String, WidgetBuilder> routes = {
   '/products': (BuildContext context) => ProductsPage(),
   '/orders': (BuildContext context) => OrdersPage(),
+  '/categories': (BuildContext context) => CategoriesPage(),
 };
 
 class MainAdmin extends StatefulWidget {
@@ -34,6 +36,8 @@ class _MainAdminState extends State<MainAdmin> {
         return ProductsPage();
       case 2:
         return OrdersPage();
+      case 3:
+        return CategoriesPage();
       default:
         return Container();
     }

@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:marketky/core/model/Category.dart';
 import '../../constant/app_color.dart';
 import '../../core/model/ColorWay.dart';
 import '../../core/model/Product.dart';
@@ -26,11 +27,13 @@ class _AddPageState extends State<AddPage> {
   String _description = '';
   List<ColorWay> _colors = [];
   List<ProductSize> _sizes = [];
-  String _category = '';
+  String _category = 'women shirts';
   ColorWay _newColor= new ColorWay(name: '', color: '');
 
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
+  final DatabaseReference databaseCategoryReference = FirebaseDatabase.instance.ref().child('categories');
 
+  List<Category> categoryList = [];
   void addProduct(Product product) async {
     await databaseReference.push().set(product.toJson());
     ScaffoldMessenger.of(context).showSnackBar(
@@ -61,6 +64,32 @@ class _AddPageState extends State<AddPage> {
     catch(error){
     }
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    databaseCategoryReference.onValue.listen((event) {
+      Map<dynamic, dynamic> dataMap = event.snapshot.value;
+
+      if (dataMap == null) {
+        categoryList = [];
+        return;
+      }
+
+      List<dynamic> dataList = dataMap.values.toList();
+      List<Category> categories = [];
+      for (var data in dataList) {
+        Category category = Category.fromJson(Map<String, dynamic>.from(data));
+        categories.add(category);
+      }
+
+      setState(() {
+        categoryList = categories;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -133,20 +162,37 @@ class _AddPageState extends State<AddPage> {
               _description = value;
             },
           ),
-            TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Category',
-            ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter a category';
-              }
-              return null;
-            },
-            onSaved: (value) {
-              _category = value;
-            },
-          ),
+                SizedBox(height: 16),
+                Text('Category'),
+                DropdownButton<String>(
+
+                  value: _category,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _category = newValue;
+                    });
+                  },
+                  items: categoryList.map((option) {
+                    return DropdownMenuItem(
+                      value: option.name,
+                      child: Text(option.name),
+                    );
+                  }).toList(),
+                ),
+          //   TextFormField(
+          //   decoration: InputDecoration(
+          //     labelText: 'Category',
+          //   ),
+          //   validator: (value) {
+          //     if (value.isEmpty) {
+          //       return 'Please enter a category';
+          //     }
+          //     return null;
+          //   },
+          //   onSaved: (value) {
+          //     _category = value;
+          //   },
+          // ),
           SizedBox(height: 16),
           Text('Colors'),
           SizedBox(height: 8),
