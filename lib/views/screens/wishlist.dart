@@ -44,7 +44,7 @@ class _WishListState extends State<WishList> {
         });
         List<Product> products = mappedList2.map((data) => Product.fromJson(data)).toList();
         dataList = products;
-        _searchDelegate = MySearchDelegate(items: products);
+        _searchDelegate = MySearchDelegate();
       });
     });
 

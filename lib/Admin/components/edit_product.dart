@@ -32,7 +32,7 @@ class _EditPageState extends State<EditPage> {
   String _description = '';
   List<ColorWay> _colors = [];
   List<ProductSize> _sizes = [];
-  String _category = 'all';
+  String _category = '';
   String productId = '';
 
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
@@ -200,7 +200,7 @@ class _EditPageState extends State<EditPage> {
                     ),
                     Text('Category'),
                     DropdownButton<String>(
-                      value: _category,
+                      value:_category == '' ? product.category :_category ,
                       onChanged: (newValue) {
                         setState(() {
                           _category = newValue;

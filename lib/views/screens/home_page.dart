@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
 
     databaseReference.onValue.listen((event) {
       setState(() {
+
         Map<dynamic, dynamic> dataList1 = event.snapshot.value;
         List<Map<String, Object>> mappedList2 = [];
         dataList1.forEach((key, value) {
@@ -51,7 +52,7 @@ class _HomePageState extends State<HomePage> {
         });
         List<Product> products = mappedList2.map((data) => Product.fromJson(data)).toList();
         dataList = products;
-        _searchDelegate = MySearchDelegate(items: products);
+        _searchDelegate = MySearchDelegate();
       });
 
     });
@@ -114,14 +115,28 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-  String query = '';
-  dynamic get filteredItems {
-    if (query.isEmpty || query == "all") {
-      return dataList;
+  Future<List<dynamic>> fetchFilteredData(String filterCategory) async {
+    Query query = databaseReference.orderByChild('category').equalTo(filterCategory);
+    if(filterCategory.isEmpty || filterCategory == 'all'){
+      query = databaseReference;
     }
 
-    return dataList.where((Product item) => item.category.toLowerCase()==query.toLowerCase()).toList();
+    DatabaseEvent dataSnapshot = await query.once();
+    Map<dynamic, dynamic> dataMap = dataSnapshot.snapshot.value;
+    if (dataMap == null) {
+      return []; // Return an empty list if no data is available
+    }
+    List<dynamic> dataList = dataMap.values.toList();
+    List<Product> dataList1 = [];
+    for (var data in dataList) {
+      Product product = Product.fromJson(Map<String, dynamic>.from(data));
+      dataList1.add(product);
+    }
+    return dataList1;
   }
+
+  String query = 'all';
+
 
   @override
   Widget build(BuildContext context) {
@@ -271,18 +286,38 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: List.generate(
-                filteredItems.length,
-                (index) => ItemCard(
-                  product: filteredItems[index],
-                ),
-              ),
-            ),
+          FutureBuilder<List<dynamic>>(
+            future: fetchFilteredData(query),
+            // ignore: missing_return
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Transform.scale(
+                  scale: 0.2, // Set the desired width scale
+                  child: CircularProgressIndicator(
+                    // Set other properties of the CircularProgressIndicator as needed
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                List<dynamic> filteredList = snapshot.data;
+                // Display the filtered list as needed
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: List.generate(
+                      filteredList.length,
+                          (index) => ItemCard(
+                        product: filteredList[index],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+            }
           )
         ],
       ),

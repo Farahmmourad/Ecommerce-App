@@ -90,7 +90,7 @@ class _MainAppBarState extends State<MainAppBar> {
         });
         List<Product> products = mappedList2.map((data) => Product.fromJson(data)).toList();
         dataList = products;
-        _searchDelegate = MySearchDelegate(items: products);
+        _searchDelegate = MySearchDelegate();
       });
     });
 

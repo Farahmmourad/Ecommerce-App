@@ -1,12 +1,14 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:marketky/core/model/Product.dart';
 
 import '../../views/screens/product_detail.dart';
 
 class MySearchDelegate extends SearchDelegate {
-  final List<Product> items;
 
-  MySearchDelegate({this.items});
+  final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('products');
+
+  MySearchDelegate();
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -35,43 +37,80 @@ class MySearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     // Show search results based on query
-    final filteredItems = items
-        .where((item) => item.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    return ListView.builder(
-      itemCount: filteredItems.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text(filteredItems[index].name),
-          onTap: () {
-            close(context, filteredItems[index]);
-          },
-        );
+    return FutureBuilder<List<dynamic>>(
+      future: fetchFilteredData(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<dynamic> filteredList = snapshot.data;
+          // Display the filtered list as needed
+          return ListView.builder(
+            itemCount: filteredList.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(filteredList[index]['name']),
+                // Add more widget properties as needed
+              );
+            },
+          );
+        }
       },
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
+
+    if(query==''){
+      return Container();
+    }
     // Show suggestions while user is typing
-    final suggestionItems = items
-        .where((item) => item.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+    return FutureBuilder<List<dynamic>>(
+      future: fetchFilteredData(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<dynamic> filteredList = snapshot.data;
+          // Display the filtered list as needed
+          return ListView.builder(
+            itemCount: filteredList.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(filteredList[index].name),
+                // Add more widget properties as needed
+                onTap: () {
+                  query = filteredList[index].name;
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ProductDetail(product: filteredList[index])));
 
-    return ListView.builder(
-      itemCount: suggestionItems.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text(suggestionItems[index].name),
-          onTap: () {
-            query = suggestionItems[index].name;
-              Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ProductDetail(product: suggestionItems[index])));
-
-          },
-        );
+                },
+              );
+            },
+          );
+        }
       },
     );
+  }
+
+  Future<List<dynamic>> fetchFilteredData(String searchQuery) async {
+    Query query = databaseReference.orderByChild('name').startAt(searchQuery).endAt(searchQuery + '\uf8ff');
+    DatabaseEvent dataSnapshot = await query.once();
+    Map<dynamic, dynamic> dataMap = dataSnapshot.snapshot.value;
+    if (dataMap == null) {
+      return []; // Return an empty list if no data is available
+    }
+    List<dynamic> dataList = dataMap.values.toList();
+    List<Product> dataList1 = [];
+    for (var data in dataList) {
+      Product product = Product.fromJson(Map<String, dynamic>.from(data));
+      dataList1.add(product);
+    }
+    return dataList1;
   }
 }
